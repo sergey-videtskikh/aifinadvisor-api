@@ -6,7 +6,7 @@
     "spring": {
       "generatorName": "spring",
       "output": "./generated/backend",
-      "inputSpec": "./openapi.yaml",
+      "inputSpec": "./openapi-simple.yaml",
       "additionalProperties": {
         "packageName": "com.finapp.api",
         "basePackage": "com.finapp",
@@ -30,7 +30,7 @@
     "typescript-fetch": {
       "generatorName": "typescript-fetch",
       "output": "./generated/frontend",
-      "inputSpec": "./openapi.yaml",
+      "inputSpec": "./openapi-simple.yaml",
       "additionalProperties": {
         "typescriptThreePlus": "true",
         "supportsES6": "true",

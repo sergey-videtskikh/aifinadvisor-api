@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: support@finapp.com
+    name: API Support
+  description: API for financial application
+  title: FinApp API
+  version: 1.0.0
+servers:
+- description: Local development server
+  url: http://localhost:8080/api/v1
+- description: Production server
+  url: https://api.finapp.com/api/v1
+security:
+- BearerAuth: []
+paths:
+  /auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+          description: Successful authentication
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid credentials
+      security: []
+      summary: User login
+      tags:
+      - Authentication
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
+  /auth/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        "201":
+          description: User successfully registered
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Validation error
+      security: []
+      summary: User registration
+      tags:
+      - Authentication
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
+components:
+  schemas:
+    LoginRequest:
+      example:
+        password: password
+        login: login
+      properties:
+        login:
+          format: email
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+      - login
+      - password
+      type: object
+    RegisterRequest:
+      example:
+        firstName: firstName
+        lastName: lastName
+        password: password
+        login: login
+      properties:
+        login:
+          format: email
+          type: string
+        password:
+          format: password
+          minLength: 8
+          type: string
+        firstName:
+          maxLength: 50
+          minLength: 2
+          type: string
+        lastName:
+          maxLength: 50
+          minLength: 2
+          type: string
+      required:
+      - firstName
+      - lastName
+      - login
+      - password
+      type: object
+    JwtResponse:
+      example:
+        token: token
+      properties:
+        token:
+          type: string
+      type: object
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+      type: object
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

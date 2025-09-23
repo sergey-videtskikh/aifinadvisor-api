@@ -1,0 +1,16 @@
+.gitignore
+.npmignore
+.openapi-generator-ignore
+README.md
+package.json
+src/apis/AuthenticationApi.ts
+src/apis/index.ts
+src/index.ts
+src/models/ErrorResponse.ts
+src/models/JwtResponse.ts
+src/models/LoginRequest.ts
+src/models/RegisterRequest.ts
+src/models/index.ts
+src/runtime.ts
+tsconfig.esm.json
+tsconfig.json

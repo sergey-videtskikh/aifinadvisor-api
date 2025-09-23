@@ -8,7 +8,7 @@
     "packages/frontend-api"
   ],
   "scripts": {
-    "validate": "openapi-generator-cli validate -i openapi.yaml",
+    "validate": "openapi-generator-cli validate -i openapi-simple.yaml",
     "generate:backend": "openapi-generator-cli generate -c openapitools.json --generator-key spring",
     "generate:frontend": "openapi-generator-cli generate -c openapitools.json --generator-key typescript-fetch",
     "generate:all": "npm run validate && npm run generate:backend && npm run generate:frontend",

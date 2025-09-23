@@ -15,13 +15,15 @@ servers:
 paths:
   # Auth endpoints
   /auth/login:
-    $ref: './api-docs/paths/auth.yaml#/~1auth~1login'
+    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1login'
   /auth/register:
-    $ref: './api-docs/paths/auth.yaml#/~1auth~1register'
-  /auth/refresh:
-    $ref: './api-docs/paths/auth.yaml#/~1auth~1refresh'
+    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1register'
   /auth/logout:
-    $ref: './api-docs/paths/auth.yaml#/~1auth~1logout'
+    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1logout'
+  /auth/telegram:
+    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1telegram'
+  /auth/change-password:
+    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1change-password'
 
   # User endpoints
   /user/profile:
@@ -84,12 +86,16 @@ components:
     # Auth schemas
     LoginRequest:
       $ref: './api-docs/schemas/auth.yaml#/LoginRequest'
-    LoginResponse:
-      $ref: './api-docs/schemas/auth.yaml#/LoginResponse'
+    JwtResponse:
+      $ref: './api-docs/schemas/auth.yaml#/JwtResponse'
     RegisterRequest:
       $ref: './api-docs/schemas/auth.yaml#/RegisterRequest'
-    RefreshTokenRequest:
-      $ref: './api-docs/schemas/auth.yaml#/RefreshTokenRequest'
+    TelegramUserDto:
+      $ref: './api-docs/schemas/auth.yaml#/TelegramUserDto'
+    ChangePasswordRequest:
+      $ref: './api-docs/schemas/auth.yaml#/ChangePasswordRequest'
+    ChangePasswordResponse:
+      $ref: './api-docs/schemas/auth.yaml#/ChangePasswordResponse'
 
     # User schemas
     UserProfile:
