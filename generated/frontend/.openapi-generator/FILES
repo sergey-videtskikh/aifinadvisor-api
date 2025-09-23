@@ -17,6 +17,8 @@ src/models/ErrorResponse.ts
 src/models/InputType.ts
 src/models/JwtResponse.ts
 src/models/LoginRequest.ts
+src/models/PagedTransactionsResponse.ts
+src/models/PagedTransactionsResponseSort.ts
 src/models/ProblemDetails.ts
 src/models/ProblemDetailsErrorsInner.ts
 src/models/RegisterRequest.ts

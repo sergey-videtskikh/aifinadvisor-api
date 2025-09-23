@@ -14,6 +14,8 @@ src/main/java/com/finapp/api/model/ErrorResponse.java
 src/main/java/com/finapp/api/model/InputType.java
 src/main/java/com/finapp/api/model/JwtResponse.java
 src/main/java/com/finapp/api/model/LoginRequest.java
+src/main/java/com/finapp/api/model/PagedTransactionsResponse.java
+src/main/java/com/finapp/api/model/PagedTransactionsResponseSort.java
 src/main/java/com/finapp/api/model/ProblemDetails.java
 src/main/java/com/finapp/api/model/ProblemDetailsErrorsInner.java
 src/main/java/com/finapp/api/model/RegisterRequest.java

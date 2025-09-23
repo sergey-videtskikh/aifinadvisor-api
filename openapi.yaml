@@ -126,15 +126,54 @@ paths:
       operationId: getTransactions
       tags: [Transactions]
       summary: Get transactions list
+      description: "Получить пагинированный список транзакций с возможностью сортировки"
+      parameters:
+        - name: page
+          in: query
+          description: "Номер страницы (начиная с 0)"
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: "Размер страницы"
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: sort
+          in: query
+          description: "Критерии сортировки в формате 'field,direction'"
+          schema:
+            type: string
+            default: "date,desc"
+            example: "date,desc"
+        - name: categoryId
+          in: query
+          description: "Фильтр по ID категории"
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          description: "Фильтр по типу транзакции"
+          schema:
+            $ref: '#/components/schemas/TransactionType'
       responses:
         '200':
           description: Transactions list
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDto'
+                $ref: '#/components/schemas/PagedTransactionsResponse'
+        '400':
+          description: Invalid pagination parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
     post:
       operationId: createTransaction
       tags: [Transactions]
@@ -148,6 +187,12 @@ paths:
       responses:
         '201':
           description: Transaction created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "URL созданной транзакции"
+              example: "/api/v1/transactions/123e4567-e89b-12d3-a456-426614174000"
           content:
             application/json:
               schema:
@@ -184,6 +229,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionDto'
+        '400':
+          description: Invalid request data
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Transaction not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
 
   # Category endpoints
   /categories:
@@ -213,10 +270,28 @@ paths:
       responses:
         '201':
           description: Category created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "URL созданной категории"
+              example: "/api/v1/categories/456e7890-e89b-12d3-a456-426614174001"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryDto'
+        '400':
+          description: Invalid request data
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Category name already exists
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
 
 components:
   schemas:
@@ -476,6 +551,60 @@ components:
       type: string
       enum: [MANUAL, IMPORT, RECEIPT_SCAN]
       description: "Тип ввода транзакции"
+
+    PagedTransactionsResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionDto'
+          description: "Массив транзакций на текущей странице"
+        totalElements:
+          type: integer
+          format: int64
+          description: "Общее количество транзакций"
+          example: 150
+        totalPages:
+          type: integer
+          description: "Общее количество страниц"
+          example: 8
+        size:
+          type: integer
+          description: "Размер страницы"
+          example: 20
+        number:
+          type: integer
+          description: "Номер текущей страницы (начиная с 0)"
+          example: 0
+        numberOfElements:
+          type: integer
+          description: "Количество элементов на текущей странице"
+          example: 20
+        first:
+          type: boolean
+          description: "Первая ли это страница"
+          example: true
+        last:
+          type: boolean
+          description: "Последняя ли это страница"
+          example: false
+        empty:
+          type: boolean
+          description: "Пустая ли текущая страница"
+          example: false
+        sort:
+          type: object
+          properties:
+            empty:
+              type: boolean
+              description: "Отсутствует ли сортировка"
+            sorted:
+              type: boolean
+              description: "Применена ли сортировка"
+            unsorted:
+              type: boolean
+              description: "Не применена ли сортировка"
 
     # Category DTOs
     CategoryDto:

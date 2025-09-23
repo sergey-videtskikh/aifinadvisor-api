@@ -10,6 +10,8 @@ export * from './ErrorResponse';
 export * from './InputType';
 export * from './JwtResponse';
 export * from './LoginRequest';
+export * from './PagedTransactionsResponse';
+export * from './PagedTransactionsResponseSort';
 export * from './ProblemDetails';
 export * from './ProblemDetailsErrorsInner';
 export * from './RegisterRequest';
