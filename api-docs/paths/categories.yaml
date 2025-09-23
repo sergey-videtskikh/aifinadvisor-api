@@ -1,6 +1,7 @@
 # Category management endpoints
 /api/v1/categories:
   get:
+    operationId: getCategories
     tags: [ Категории ]
     summary: Получить список всех категорий
     description: "Возвращает иерархический список всех категорий пользователя"
@@ -20,6 +21,7 @@
             schema:
               $ref: '../schemas/common.yaml#/ErrorResponse'
   post:
+    operationId: createCategory
     tags: [ Категории ]
     summary: Создать новую категорию или подкатегорию
     description: "Добавляет новую категорию. Для создания подкатегории необходимо указать parentId. Тип подкатегории должен совпадать с типом родителя."
@@ -51,6 +53,7 @@
 
 /api/v1/categories/{id}:
   patch:
+    operationId: updateCategory
     tags: [ Категории ]
     summary: Обновить название категории
     description: Обновляет название существующей категории по её ID.
@@ -92,6 +95,7 @@
             schema:
               $ref: '../schemas/common.yaml#/ErrorResponse'
   delete:
+    operationId: deleteCategory
     tags: [ Категории ]
     summary: Удалить категорию
     description: "Удаляет категорию по её ID. Удаление невозможно, если у категории есть подкатегории."

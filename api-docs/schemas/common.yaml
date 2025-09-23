@@ -1,6 +1,55 @@
 # Common schemas used across different modules
+
+# RFC7807 Problem Details for HTTP APIs
+ProblemDetails:
+  type: object
+  required: [type, title, status]
+  properties:
+    type:
+      type: string
+      format: uri
+      description: "URI идентифицирующий тип проблемы"
+      example: "https://api.finapp.com/problems/validation-error"
+    title:
+      type: string
+      description: "Краткое описание типа проблемы"
+      example: "Validation Error"
+    status:
+      type: integer
+      description: "HTTP статус код"
+      example: 400
+    detail:
+      type: string
+      description: "Детальное описание проблемы"
+      example: "Поле 'amount' должно быть положительным числом"
+    instance:
+      type: string
+      format: uri
+      description: "URI идентифицирующий конкретный случай проблемы"
+      example: "/api/v1/transactions/123"
+    errors:
+      type: array
+      description: "Детали ошибок валидации"
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+            description: "Поле с ошибкой"
+            example: "amount"
+          message:
+            type: string
+            description: "Сообщение об ошибке"
+            example: "должно быть положительным числом"
+          code:
+            type: string
+            description: "Код ошибки"
+            example: "POSITIVE_NUMBER_REQUIRED"
+
+# Legacy error response (deprecated - use ProblemDetails)
 ErrorResponse:
   type: object
+  deprecated: true
   properties:
     status: { type: integer, description: "HTTP статус код" }
     error: { type: string, description: "Тип ошибки" }
@@ -8,8 +57,10 @@ ErrorResponse:
     timestamp: { type: string, format: date-time, description: "Время возникновения ошибки" }
     path: { type: string, description: "Путь API эндпоинта" }
 
+# Legacy validation error response (deprecated - use ProblemDetails)
 ValidationErrorResponse:
   type: object
+  deprecated: true
   properties:
     status: { type: integer, description: "HTTP статус код" }
     error: { type: string, description: "Тип ошибки" }

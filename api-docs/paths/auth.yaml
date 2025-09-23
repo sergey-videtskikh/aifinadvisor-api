@@ -1,6 +1,7 @@
 # Authentication endpoints
 /api/v1/auth/register:
   post:
+    operationId: registerUser
     tags: [ Аутентификация ]
     summary: Регистрация нового пользователя
     security: [ ]
@@ -22,6 +23,7 @@
 
 /api/v1/auth/login:
   post:
+    operationId: authenticateUser
     tags: [ Аутентификация ]
     summary: Аутентификация по логину и паролю
     security: [ ]
@@ -47,6 +49,7 @@
 
 /api/v1/auth/logout:
   post:
+    operationId: logoutUser
     tags: [ Аутентификация ]
     summary: Выход из системы
     description: "Завершает сеанс пользователя. В текущей реализации JWT токены являются stateless, поэтому логика выхода реализуется на клиентской стороне путем удаления токена."
@@ -62,6 +65,7 @@
 
 /api/v1/auth/telegram:
   post:
+    operationId: authenticateWithTelegram
     tags: [ Аутентификация ]
     summary: Аутентификация через Telegram
     security: [ ]
@@ -87,6 +91,7 @@
 
 /api/v1/auth/change-password:
   post:
+    operationId: changeUserPassword
     tags: [ Аутентификация ]
     summary: Изменение пароля пользователя
     description: |

@@ -6,6 +6,7 @@ info:
   contact:
     name: API Support
     email: support@finapp.com
+
 servers:
   - url: http://localhost:8080/api/v1
     description: Local development server
@@ -15,143 +16,587 @@ servers:
 paths:
   # Auth endpoints
   /auth/login:
-    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1login'
+    post:
+      operationId: authenticateUser
+      tags: [Authentication]
+      summary: User login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/register:
-    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1register'
-  /auth/logout:
-    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1logout'
+    post:
+      operationId: registerUser
+      tags: [Authentication]
+      summary: User registration
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/telegram:
-    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1telegram'
+    post:
+      operationId: authenticateWithTelegram
+      tags: [Authentication]
+      summary: Telegram authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUserDto'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Telegram authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/change-password:
-    $ref: './api-docs/paths/auth.yaml#/~1api~1v1~1auth~1change-password'
+    post:
+      operationId: changeUserPassword
+      tags: [Authentication]
+      summary: Change user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePasswordResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
-  # User endpoints
-  /user/profile:
-    $ref: './api-docs/paths/user.yaml#/~1user~1profile'
-  /user/settings:
-    $ref: './api-docs/paths/user.yaml#/~1user~1settings'
-
-  # Categories endpoints
-  /categories:
-    $ref: './api-docs/paths/categories.yaml#/~1categories'
-  /categories/{id}:
-    $ref: './api-docs/paths/categories.yaml#/~1categories~1{id}'
-
-  # Transactions endpoints
+  # Transaction endpoints
   /transactions:
-    $ref: './api-docs/paths/transactions.yaml#/~1transactions'
+    get:
+      operationId: getTransactions
+      tags: [Transactions]
+      summary: Get transactions list
+      responses:
+        '200':
+          description: Transactions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionDto'
+    post:
+      operationId: createTransaction
+      tags: [Transactions]
+      summary: Create new transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /transactions/{id}:
-    $ref: './api-docs/paths/transactions.yaml#/~1transactions~1{id}'
-  /transactions/search:
-    $ref: './api-docs/paths/transactions.yaml#/~1transactions~1search'
+    put:
+      operationId: updateTransaction
+      tags: [Transactions]
+      summary: Update transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+      responses:
+        '200':
+          description: Transaction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
 
-  # Analytics endpoints
-  /analytics/summary:
-    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1summary'
-  /analytics/trends:
-    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1trends'
-  /analytics/categories:
-    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1categories'
-
-  # Receipts endpoints
-  /receipts:
-    $ref: './api-docs/paths/receipts.yaml#/~1receipts'
-  /receipts/{id}:
-    $ref: './api-docs/paths/receipts.yaml#/~1receipts~1{id}'
-  /receipts/upload:
-    $ref: './api-docs/paths/receipts.yaml#/~1receipts~1upload'
-
-  # Import/Export endpoints
-  /import-export/export:
-    $ref: './api-docs/paths/import-export.yaml#/~1import-export~1export'
-  /import-export/import:
-    $ref: './api-docs/paths/import-export.yaml#/~1import-export~1import'
-
-  # Dictionaries endpoints
-  /dictionaries/currencies:
-    $ref: './api-docs/paths/dictionaries.yaml#/~1dictionaries~1currencies'
-  /dictionaries/countries:
-    $ref: './api-docs/paths/dictionaries.yaml#/~1dictionaries~1countries'
+  # Category endpoints
+  /categories:
+    get:
+      operationId: getCategories
+      tags: [Categories]
+      summary: Get categories list
+      responses:
+        '200':
+          description: Categories list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+    post:
+      operationId: createCategory
+      tags: [Categories]
+      summary: Create new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
 
 components:
   schemas:
-    # Common schemas
-    ErrorResponse:
-      $ref: './api-docs/schemas/common.yaml#/ErrorResponse'
-    ValidationErrorResponse:
-      $ref: './api-docs/schemas/common.yaml#/ValidationErrorResponse'
-    PaginationResponse:
-      $ref: './api-docs/schemas/common.yaml#/PaginationResponse'
-
-    # Auth schemas
+    # Auth DTOs
     LoginRequest:
-      $ref: './api-docs/schemas/auth.yaml#/LoginRequest'
-    JwtResponse:
-      $ref: './api-docs/schemas/auth.yaml#/JwtResponse'
+      type: object
+      required: [login, password]
+      properties:
+        login:
+          type: string
+          format: email
+          description: "Login (email) для входа"
+          example: "ivan.ivanov@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: "Пароль"
+          example: "SecurePassword123"
+
     RegisterRequest:
-      $ref: './api-docs/schemas/auth.yaml#/RegisterRequest'
+      type: object
+      required: [login, password, firstName, lastName]
+      properties:
+        login:
+          type: string
+          format: email
+          description: "Login (email) для входа"
+          example: "ivan.ivanov@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: "Пароль"
+          example: "SecurePassword123"
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          description: "Имя"
+          example: "Иван"
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          description: "Фамилия"
+          example: "Иванов"
+        phone:
+          type: string
+          nullable: true
+          description: "Номер телефона"
+          example: "+79261234567"
+        telegramNickname:
+          type: string
+          nullable: true
+          description: "Telegram никнейм"
+          example: "ivan_ivanov"
+
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: "JWT токен"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
     TelegramUserDto:
-      $ref: './api-docs/schemas/auth.yaml#/TelegramUserDto'
+      type: object
+      required: [id, first_name, auth_date, hash]
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "Telegram User ID"
+        first_name:
+          type: string
+          description: "Имя пользователя из Telegram"
+        last_name:
+          type: string
+          nullable: true
+          description: "Фамилия пользователя из Telegram"
+        username:
+          type: string
+          nullable: true
+          description: "Username пользователя в Telegram"
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          description: "URL фотографии профиля"
+        auth_date:
+          type: integer
+          format: int64
+          description: "Unix timestamp авторизации"
+        hash:
+          type: string
+          description: "Хеш для проверки подлинности данных"
+
     ChangePasswordRequest:
-      $ref: './api-docs/schemas/auth.yaml#/ChangePasswordRequest'
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+          format: password
+          description: "Текущий пароль пользователя для подтверждения"
+          example: "currentSecretPassword123"
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 128
+          description: "Новый пароль"
+          example: "NewSecurePassword123!"
+        confirmPassword:
+          type: string
+          format: password
+          description: "Подтверждение нового пароля"
+          example: "NewSecurePassword123!"
+
     ChangePasswordResponse:
-      $ref: './api-docs/schemas/auth.yaml#/ChangePasswordResponse'
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "Флаг успешного изменения пароля"
+          example: true
+        message:
+          type: string
+          description: "Сообщение об успешном изменении пароля"
+          example: "Пароль успешно изменен"
+        changedAt:
+          type: string
+          format: date-time
+          description: "Дата и время изменения пароля"
+          example: "2024-03-15T14:30:00Z"
+        newToken:
+          type: string
+          nullable: true
+          description: "Новый JWT токен, если требуется обновление сессии"
 
-    # User schemas
-    UserProfile:
-      $ref: './api-docs/schemas/user.yaml#/UserProfile'
-    UserSettings:
-      $ref: './api-docs/schemas/user.yaml#/UserSettings'
-    UpdateUserProfileRequest:
-      $ref: './api-docs/schemas/user.yaml#/UpdateUserProfileRequest'
+    # Transaction DTOs
+    TransactionDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID транзакции"
+        amount:
+          type: string
+          pattern: '^\d+\.\d{2}$'
+          description: "Сумма транзакции в формате decimal string (копейки)"
+          example: "250.50"
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-15"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          description: "Название транзакции"
+          example: "Обед в кафе"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        inputType:
+          $ref: '#/components/schemas/InputType'
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
+          default: false
 
-    # Category schemas
-    Category:
-      $ref: './api-docs/schemas/categories.yaml#/Category'
-    CreateCategoryRequest:
-      $ref: './api-docs/schemas/categories.yaml#/CreateCategoryRequest'
-    UpdateCategoryRequest:
-      $ref: './api-docs/schemas/categories.yaml#/UpdateCategoryRequest'
-
-    # Transaction schemas
-    Transaction:
-      $ref: './api-docs/schemas/transactions.yaml#/Transaction'
     CreateTransactionRequest:
-      $ref: './api-docs/schemas/transactions.yaml#/CreateTransactionRequest'
+      type: object
+      required: [amount, categoryId, name, type, accountId]
+      properties:
+        amount:
+          type: string
+          pattern: '^\d+\.\d{2}$'
+          description: "Сумма транзакции в формате decimal string (копейки)"
+          example: "250.50"
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-15"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Название транзакции"
+          example: "Обед в кафе"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        inputType:
+          $ref: '#/components/schemas/InputType'
+          default: MANUAL
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
+          default: false
+
     UpdateTransactionRequest:
-      $ref: './api-docs/schemas/transactions.yaml#/UpdateTransactionRequest'
-    TransactionSearchRequest:
-      $ref: './api-docs/schemas/transactions.yaml#/TransactionSearchRequest'
+      type: object
+      properties:
+        amount:
+          type: string
+          pattern: '^\d+\.\d{2}$'
+          description: "Сумма транзакции в формате decimal string (копейки)"
+          example: "260.00"
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-16"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Название транзакции"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
 
-    # Analytics schemas
-    AnalyticsSummary:
-      $ref: './api-docs/schemas/analytics.yaml#/AnalyticsSummary'
-    TrendData:
-      $ref: './api-docs/schemas/analytics.yaml#/TrendData'
-    CategoryAnalytics:
-      $ref: './api-docs/schemas/analytics.yaml#/CategoryAnalytics'
+    TransactionType:
+      type: string
+      enum: [INCOME, EXPENSE, TRANSFER]
+      description: "Тип транзакции"
 
-    # Receipt schemas
-    Receipt:
-      $ref: './api-docs/schemas/receipts.yaml#/Receipt'
-    UploadReceiptRequest:
-      $ref: './api-docs/schemas/receipts.yaml#/UploadReceiptRequest'
-    ReceiptProcessingResult:
-      $ref: './api-docs/schemas/receipts.yaml#/ReceiptProcessingResult'
+    InputType:
+      type: string
+      enum: [MANUAL, IMPORT, RECEIPT_SCAN]
+      description: "Тип ввода транзакции"
 
-    # Import/Export schemas
-    ExportRequest:
-      $ref: './api-docs/schemas/import-export.yaml#/ExportRequest'
-    ImportRequest:
-      $ref: './api-docs/schemas/import-export.yaml#/ImportRequest'
-    ExportResult:
-      $ref: './api-docs/schemas/import-export.yaml#/ExportResult'
+    # Category DTOs
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          description: "Название категории"
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID родительской категории"
+        icon:
+          type: string
+          nullable: true
+          description: "Иконка категории"
+          example: "solar:wallet-money-line-duotone"
+        iconColor:
+          type: string
+          nullable: true
+          description: "Цвет иконки в HEX-формате"
+          example: "#10B981"
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryDto'
+          description: "Список вложенных подкатегорий"
 
-    # Dictionary schemas
-    Currency:
-      $ref: './api-docs/schemas/dictionaries.yaml#/Currency'
-    Country:
-      $ref: './api-docs/schemas/dictionaries.yaml#/Country'
+    CreateCategoryRequest:
+      type: object
+      required: [name, type]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: "Название категории"
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID родительской категории"
+        icon:
+          type: string
+          nullable: true
+          description: "Иконка категории"
+        iconColor:
+          type: string
+          nullable: true
+          description: "Цвет иконки в HEX-формате"
+
+    CategoryType:
+      type: string
+      enum: [INCOME, EXPENSE]
+      description: "Тип категории"
+
+    # Common DTOs
+    ProblemDetails:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri
+          description: "URI идентифицирующий тип проблемы"
+          example: "https://api.finapp.com/problems/validation-error"
+        title:
+          type: string
+          description: "Краткое описание типа проблемы"
+          example: "Validation Error"
+        status:
+          type: integer
+          description: "HTTP статус код"
+          example: 400
+        detail:
+          type: string
+          description: "Детальное описание проблемы"
+          example: "Поле 'amount' должно быть положительным числом"
+        instance:
+          type: string
+          format: uri
+          description: "URI идентифицирующий конкретный случай проблемы"
+          example: "/api/v1/transactions/123"
+        errors:
+          type: array
+          description: "Детали ошибок валидации"
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: "Поле с ошибкой"
+                example: "amount"
+              message:
+                type: string
+                description: "Сообщение об ошибке"
+                example: "должно быть положительным числом"
+              code:
+                type: string
+                description: "Код ошибки"
+                example: "POSITIVE_NUMBER_REQUIRED"
+
+    ErrorResponse:
+      type: object
+      deprecated: true
+      properties:
+        message:
+          type: string
+          description: "Сообщение об ошибке"
+        code:
+          type: string
+          description: "Код ошибки"
 
   securitySchemes:
     BearerAuth:

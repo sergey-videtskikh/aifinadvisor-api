@@ -6,7 +6,7 @@
     "spring": {
       "generatorName": "spring",
       "output": "./generated/backend",
-      "inputSpec": "./openapi-simple.yaml",
+      "inputSpec": "./openapi.yaml",
       "additionalProperties": {
         "packageName": "com.finapp.api",
         "basePackage": "com.finapp",
@@ -14,8 +14,8 @@
         "apiPackage": "com.finapp.api.controller",
         "configPackage": "com.finapp.api.config",
         "invokerPackage": "com.finapp.api.client",
-        "java8": "true",
-        "dateLibrary": "java8",
+        "java8": "false",
+        "dateLibrary": "java8-localdatetime",
         "useTags": "true",
         "interfaceOnly": "true",
         "skipDefaultInterface": "true",
@@ -30,7 +30,7 @@
     "typescript-fetch": {
       "generatorName": "typescript-fetch",
       "output": "./generated/frontend",
-      "inputSpec": "./openapi-simple.yaml",
+      "inputSpec": "./openapi.yaml",
       "additionalProperties": {
         "typescriptThreePlus": "true",
         "supportsES6": "true",

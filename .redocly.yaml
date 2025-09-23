@@ -1,0 +1,55 @@
+apis:
+  main:
+    root: openapi.yaml
+
+rules:
+  # Критичные правила
+  operation-operationId: error
+  operation-summary: error
+  operation-description: warn
+  no-unresolved-refs: error
+  no-unused-components: warn
+  spec-components-invalid-map-name: error
+
+  # Правила качества API
+  operation-2xx-response: error
+  operation-4xx-response: warn
+  response-contains-header: off
+
+  # Структурные правила
+  info-contact: warn
+  info-license: off
+  tag-description: warn
+
+  # Правила безопасности
+  operation-security-defined: warn
+
+  # Правила данных
+  boolean-parameter-prefixes: warn
+  no-enum-type-mismatch: error
+  no-example-value-and-externalValue: error
+
+  # Правила стиля
+  operation-singular-tag: off
+  path-declaration-must-exist: error
+  path-not-include-query: error
+  path-parameters-defined: error
+
+preprocessors:
+  remove-x-internal: off
+
+decorators:
+  remove-internal-operations:
+    subject:
+      type: Operation
+      filterIn:
+        property: x-internal
+        value: true
+
+theme:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: JavaScript
+        - lang: TypeScript

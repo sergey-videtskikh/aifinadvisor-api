@@ -20,13 +20,13 @@ import { exists, mapValues } from '../runtime';
  */
 export interface ErrorResponse {
     /**
-     * 
+     * Сообщение об ошибке
      * @type {string}
      * @memberof ErrorResponse
      */
     message?: string;
     /**
-     * 
+     * Код ошибки
      * @type {string}
      * @memberof ErrorResponse
      */

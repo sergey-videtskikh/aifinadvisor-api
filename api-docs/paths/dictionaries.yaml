@@ -1,6 +1,7 @@
 # Dictionary and reference data endpoints
 /api/v1/dictionaries/currencies:
   get:
+    operationId: getCurrencies
     tags: [ Словари и справочники ]
     summary: Получить справочник валют
     description: Возвращает список всех доступных валют в системе.
@@ -22,6 +23,7 @@
 
 /api/v1/dictionaries/user-categories:
   get:
+    operationId: getUserCategories
     tags: [ Словари и справочники ]
     summary: Получить список категорий пользователя
     description: "Возвращает персональный иерархический список категорий (доходов и расходов) для текущего пользователя. Если список пуст, он будет создан на основе шаблона по умолчанию. Этот эндпоинт предназначен для чтения списка категорий (например, для селектов в UI)."
@@ -43,6 +45,7 @@
 
 /api/v1/dictionaries/default-categories:
   get:
+    operationId: getDefaultCategories
     tags: [ Словари и справочники ]
     summary: Получить шаблон дефолтных категорий
     description: "Возвращает системный шаблон категорий по умолчанию, которые используются для создания персональных категорий новых пользователей. Полезно для предпросмотра доступных категорий или сброса к дефолтным значениям."
@@ -64,6 +67,7 @@
 
 /api/v1/dictionaries/category-icons:
   get:
+    operationId: getCategoryIcons
     tags: [ Словари и справочники ]
     summary: Получить доступные иконки для категорий
     description: |

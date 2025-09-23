@@ -1,6 +1,7 @@
 # Analytics endpoints
 /api/v1/analytics:
   get:
+    operationId: getAnalytics
     tags: [ Аналитика ]
     summary: Получить аналитическую информацию
     description: "Возвращает аналитическую информацию о доходах, расходах, балансе и последних транзакциях за указанный период. По умолчанию, период составляет последний год."
@@ -41,6 +42,7 @@
 
 /api/v1/analytics/categories:
   get:
+    operationId: getAnalyticsCategories
     tags: [ Аналитика ]
     summary: Получить сводку по категориям
     description: "Возвращает аналитическую информацию по категориям с суммами доходов и расходов, сортировкой и фильтрацией."
@@ -110,6 +112,7 @@
 
 /api/v1/analytics/summary:
   get:
+    operationId: getAnalyticsSummary
     tags: [ Аналитика ]
     summary: Получить сводку по транзакциям за период
     description: "Возвращает общую информацию о транзакциях за указанный период: количество, баланс, доходы, расходы."
@@ -163,6 +166,7 @@
 
 /api/v1/analytics/daily:
   get:
+    operationId: getAnalyticsDaily
     tags: [ Аналитика ]
     summary: Получить суммы транзакций по дням
     description: "Возвращает агрегированные данные по транзакциям за каждый день в указанном периоде."

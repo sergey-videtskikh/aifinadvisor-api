@@ -8,14 +8,17 @@
     "packages/frontend-api"
   ],
   "scripts": {
-    "validate": "openapi-generator-cli validate -i openapi-simple.yaml",
-    "generate:backend": "openapi-generator-cli generate -c openapitools.json --generator-key spring",
-    "generate:frontend": "openapi-generator-cli generate -c openapitools.json --generator-key typescript-fetch",
+    "lint:openapi": "redocly lint openapi.yaml",
+    "validate": "npm run lint:openapi && openapi-generator-cli validate -i openapi.yaml",
+    "generate:backend": "openapi-generator-cli generate -g spring -i openapi.yaml -o ./generated/backend --package-name com.finapp.api --api-package com.finapp.api.controller --model-package com.finapp.api.model --additional-properties=useSpringBoot3=true,interfaceOnly=true,skipDefaultInterface=true",
+    "generate:frontend": "openapi-generator-cli generate -g typescript-fetch -i openapi.yaml -o ./generated/frontend --additional-properties=typescriptThreePlus=true,supportsES6=true,npmName=@finapp/api-client,npmVersion=1.0.0,withInterfaces=true,modelPropertyNaming=camelCase",
     "generate:all": "npm run validate && npm run generate:backend && npm run generate:frontend",
     "prepare:packages": "npm run generate:all && npm run copy:packages",
     "copy:packages": "npm run copy:backend && npm run copy:frontend",
     "copy:backend": "rimraf packages/backend-api/src && cp -r generated/backend/src packages/backend-api/ && cp generated/backend/pom.xml packages/backend-api/",
     "copy:frontend": "rimraf packages/frontend-api/src && cp -r generated/frontend/* packages/frontend-api/",
+    "mock:server": "prism mock openapi.yaml --host 0.0.0.0 --port 4010",
+    "mock:server:dynamic": "prism mock openapi.yaml --host 0.0.0.0 --port 4010 --dynamic",
     "build:packages": "npm run prepare:packages && npm run build:frontend-package",
     "build:frontend-package": "cd packages/frontend-api && npm run build",
     "version:patch": "npm version patch && npm run update:package-versions",
@@ -30,6 +33,8 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@redocly/cli": "^1.5.0",
+    "@stoplight/prism-cli": "^5.5.0",
     "rimraf": "^5.0.5",
     "semver": "^7.5.4"
   },

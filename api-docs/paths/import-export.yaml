@@ -1,6 +1,7 @@
 # Import/Export endpoints for Excel files
 /api/v1/transactions/template:
   get:
+    operationId: downloadTransactionTemplate
     tags:
       - Импорт/Экспорт транзакций
     summary: Скачать Excel шаблон для импорта транзакций
@@ -54,6 +55,7 @@
 
 /api/v1/transactions/import:
   post:
+    operationId: importTransactions
     tags:
       - Импорт/Экспорт транзакций
     summary: Импортировать транзакции из Excel файла
@@ -128,6 +130,7 @@
 
 /api/v1/transactions/import/history:
   get:
+    operationId: getImportHistory
     tags:
       - Импорт/Экспорт транзакций
     summary: Получить историю импорта транзакций
@@ -202,6 +205,7 @@
 
 /api/v1/transactions/import/{importId}:
   get:
+    operationId: getImportById
     tags:
       - Импорт/Экспорт транзакций
     summary: Получить детали конкретной операции импорта

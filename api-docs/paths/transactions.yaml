@@ -1,6 +1,7 @@
 # Transaction management endpoints
 /api/v1/transactions:
   get:
+    operationId: getTransactions
     tags: [ Транзакции ]
     summary: Получить список транзакций
     description: "Возвращает пагинированный список транзакций с возможностью фильтрации по различным параметрам."
@@ -77,6 +78,7 @@
             schema:
               $ref: '../schemas/common.yaml#/ErrorResponse'
   post:
+    operationId: createTransaction
     tags: [ Транзакции ]
     summary: Добавить ручную транзакцию
     description: "Создает новую транзакцию с указанными параметрами."
@@ -108,6 +110,7 @@
 
 /api/v1/transactions/{id}:
   get:
+    operationId: getTransactionById
     tags: [ Транзакции ]
     summary: Получить транзакцию по ID
     description: "Возвращает данные транзакции по её идентификатору."
@@ -144,6 +147,7 @@
             schema:
               $ref: '../schemas/common.yaml#/ErrorResponse'
   patch:
+    operationId: updateTransaction
     tags: [ Транзакции ]
     summary: Частично обновить транзакцию
     description: "Обновляет указанные поля существующей транзакции."
@@ -186,6 +190,7 @@
             schema:
               $ref: '../schemas/common.yaml#/ErrorResponse'
   delete:
+    operationId: deleteTransaction
     tags: [ Транзакции ]
     summary: Удалить транзакцию
     description: "Удаляет транзакцию по её ID."

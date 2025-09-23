@@ -1,6 +1,7 @@
 # User endpoints
 /api/v1/user/me:
   get:
+    operationId: getUserProfile
     tags: [ Пользователь ]
     summary: Получить информацию о текущем пользователе
     description: Возвращает детальную информацию об аутентифицированном пользователе.
