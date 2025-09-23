@@ -18,7 +18,7 @@ import javax.annotation.Generated;
  * JwtResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:12:26.454598+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
 public class JwtResponse {
 
   private String token;
@@ -29,11 +29,11 @@ public class JwtResponse {
   }
 
   /**
-   * Get token
+   * JWT токен
    * @return token
   */
   
-  @Schema(name = "token", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "token", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", description = "JWT токен", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("token")
   public String getToken() {
     return token;

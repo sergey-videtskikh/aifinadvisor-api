@@ -199,3 +199,5 @@ Cargo.lock
 *.crt
 secrets/
 config/secrets.yml
+/packages/
+/generated/

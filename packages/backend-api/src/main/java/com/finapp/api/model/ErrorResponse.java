@@ -18,7 +18,7 @@ import javax.annotation.Generated;
  * ErrorResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:12:26.454598+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
 public class ErrorResponse {
 
   private String message;

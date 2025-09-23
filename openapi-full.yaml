@@ -1,0 +1,553 @@
+openapi: 3.0.3
+info:
+  title: FinApp API
+  description: API for financial application
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@finapp.com
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.finapp.com/api/v1
+    description: Production server
+
+paths:
+  # Auth endpoints
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: User registration
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/telegram:
+    post:
+      tags: [Authentication]
+      summary: Telegram authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUserDto'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Telegram authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/change-password:
+    post:
+      tags: [Authentication]
+      summary: Change user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePasswordResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Transaction endpoints
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: Get transactions list
+      responses:
+        '200':
+          description: Transactions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionDto'
+    post:
+      tags: [Transactions]
+      summary: Create new transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /transactions/{id}:
+    put:
+      tags: [Transactions]
+      summary: Update transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+      responses:
+        '200':
+          description: Transaction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
+
+  # Category endpoints
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Get categories list
+      responses:
+        '200':
+          description: Categories list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+    post:
+      tags: [Categories]
+      summary: Create new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+
+components:
+  schemas:
+    # Auth DTOs
+    LoginRequest:
+      type: object
+      required: [login, password]
+      properties:
+        login:
+          type: string
+          format: email
+          description: "Login (email) для входа"
+          example: "ivan.ivanov@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: "Пароль"
+          example: "SecurePassword123"
+
+    RegisterRequest:
+      type: object
+      required: [login, password, firstName, lastName]
+      properties:
+        login:
+          type: string
+          format: email
+          description: "Login (email) для входа"
+          example: "ivan.ivanov@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: "Пароль"
+          example: "SecurePassword123"
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          description: "Имя"
+          example: "Иван"
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          description: "Фамилия"
+          example: "Иванов"
+        phone:
+          type: string
+          nullable: true
+          description: "Номер телефона"
+          example: "+79261234567"
+        telegramNickname:
+          type: string
+          nullable: true
+          description: "Telegram никнейм"
+          example: "ivan_ivanov"
+
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: "JWT токен"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    TelegramUserDto:
+      type: object
+      required: [id, first_name, auth_date, hash]
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "Telegram User ID"
+        first_name:
+          type: string
+          description: "Имя пользователя из Telegram"
+        last_name:
+          type: string
+          nullable: true
+          description: "Фамилия пользователя из Telegram"
+        username:
+          type: string
+          nullable: true
+          description: "Username пользователя в Telegram"
+        photo_url:
+          type: string
+          format: uri
+          nullable: true
+          description: "URL фотографии профиля"
+        auth_date:
+          type: integer
+          format: int64
+          description: "Unix timestamp авторизации"
+        hash:
+          type: string
+          description: "Хеш для проверки подлинности данных"
+
+    ChangePasswordRequest:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+          format: password
+          description: "Текущий пароль пользователя для подтверждения"
+          example: "currentSecretPassword123"
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 128
+          description: "Новый пароль"
+          example: "NewSecurePassword123!"
+        confirmPassword:
+          type: string
+          format: password
+          description: "Подтверждение нового пароля"
+          example: "NewSecurePassword123!"
+
+    ChangePasswordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "Флаг успешного изменения пароля"
+          example: true
+        message:
+          type: string
+          description: "Сообщение об успешном изменении пароля"
+          example: "Пароль успешно изменен"
+        changedAt:
+          type: string
+          format: date-time
+          description: "Дата и время изменения пароля"
+          example: "2024-03-15T14:30:00Z"
+        newToken:
+          type: string
+          nullable: true
+          description: "Новый JWT токен, если требуется обновление сессии"
+
+    # Transaction DTOs
+    TransactionDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID транзакции"
+        amount:
+          type: number
+          format: double
+          description: "Сумма транзакции"
+          example: 250.50
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-15"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          description: "Название транзакции"
+          example: "Обед в кафе"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        inputType:
+          $ref: '#/components/schemas/InputType'
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
+          default: false
+
+    CreateTransactionRequest:
+      type: object
+      required: [amount, categoryId, name, type, accountId]
+      properties:
+        amount:
+          type: number
+          format: double
+          description: "Сумма транзакции"
+          example: 250.50
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-15"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Название транзакции"
+          example: "Обед в кафе"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        inputType:
+          $ref: '#/components/schemas/InputType'
+          default: MANUAL
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
+          default: false
+
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          description: "Сумма транзакции"
+          example: 260.00
+        date:
+          type: string
+          format: date
+          description: "Дата транзакции"
+          example: "2025-09-16"
+        categoryId:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Название транзакции"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        accountId:
+          type: string
+          format: uuid
+          description: "ID счета"
+        excluded:
+          type: boolean
+          description: "Исключить из расчетов"
+
+    TransactionType:
+      type: string
+      enum: [INCOME, EXPENSE, TRANSFER]
+      description: "Тип транзакции"
+
+    InputType:
+      type: string
+      enum: [MANUAL, IMPORT, RECEIPT_SCAN]
+      description: "Тип ввода транзакции"
+
+    # Category DTOs
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID категории"
+        name:
+          type: string
+          description: "Название категории"
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID родительской категории"
+        icon:
+          type: string
+          nullable: true
+          description: "Иконка категории"
+          example: "solar:wallet-money-line-duotone"
+        iconColor:
+          type: string
+          nullable: true
+          description: "Цвет иконки в HEX-формате"
+          example: "#10B981"
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryDto'
+          description: "Список вложенных подкатегорий"
+
+    CreateCategoryRequest:
+      type: object
+      required: [name, type]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: "Название категории"
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID родительской категории"
+        icon:
+          type: string
+          nullable: true
+          description: "Иконка категории"
+        iconColor:
+          type: string
+          nullable: true
+          description: "Цвет иконки в HEX-формате"
+
+    CategoryType:
+      type: string
+      enum: [INCOME, EXPENSE]
+      description: "Тип категории"
+
+    # Common DTOs
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Сообщение об ошибке"
+        code:
+          type: string
+          description: "Код ошибки"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

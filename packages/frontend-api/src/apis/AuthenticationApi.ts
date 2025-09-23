@@ -15,12 +15,19 @@
 
 import * as runtime from '../runtime';
 import type {
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   ErrorResponse,
   JwtResponse,
   LoginRequest,
   RegisterRequest,
+  TelegramUserDto,
 } from '../models/index';
 import {
+    ChangePasswordRequestFromJSON,
+    ChangePasswordRequestToJSON,
+    ChangePasswordResponseFromJSON,
+    ChangePasswordResponseToJSON,
     ErrorResponseFromJSON,
     ErrorResponseToJSON,
     JwtResponseFromJSON,
@@ -29,7 +36,13 @@ import {
     LoginRequestToJSON,
     RegisterRequestFromJSON,
     RegisterRequestToJSON,
+    TelegramUserDtoFromJSON,
+    TelegramUserDtoToJSON,
 } from '../models/index';
+
+export interface AuthChangePasswordPostRequest {
+    changePasswordRequest: ChangePasswordRequest;
+}
 
 export interface AuthLoginPostRequest {
     loginRequest: LoginRequest;
@@ -39,10 +52,55 @@ export interface AuthRegisterPostRequest {
     registerRequest: RegisterRequest;
 }
 
+export interface AuthTelegramPostRequest {
+    telegramUserDto: TelegramUserDto;
+}
+
 /**
  * 
  */
 export class AuthenticationApi extends runtime.BaseAPI {
+
+    /**
+     * Change user password
+     */
+    async authChangePasswordPostRaw(requestParameters: AuthChangePasswordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChangePasswordResponse>> {
+        if (requestParameters.changePasswordRequest === null || requestParameters.changePasswordRequest === undefined) {
+            throw new runtime.RequiredError('changePasswordRequest','Required parameter requestParameters.changePasswordRequest was null or undefined when calling authChangePasswordPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/auth/change-password`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ChangePasswordRequestToJSON(requestParameters.changePasswordRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ChangePasswordResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Change user password
+     */
+    async authChangePasswordPost(requestParameters: AuthChangePasswordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChangePasswordResponse> {
+        const response = await this.authChangePasswordPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * User login
@@ -107,6 +165,39 @@ export class AuthenticationApi extends runtime.BaseAPI {
      */
     async authRegisterPost(requestParameters: AuthRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.authRegisterPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Telegram authentication
+     */
+    async authTelegramPostRaw(requestParameters: AuthTelegramPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
+        if (requestParameters.telegramUserDto === null || requestParameters.telegramUserDto === undefined) {
+            throw new runtime.RequiredError('telegramUserDto','Required parameter requestParameters.telegramUserDto was null or undefined when calling authTelegramPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/auth/telegram`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TelegramUserDtoToJSON(requestParameters.telegramUserDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Telegram authentication
+     */
+    async authTelegramPost(requestParameters: AuthTelegramPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
+        const response = await this.authTelegramPostRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

@@ -20,13 +20,13 @@ import { exists, mapValues } from '../runtime';
  */
 export interface LoginRequest {
     /**
-     * 
+     * Login (email) для входа
      * @type {string}
      * @memberof LoginRequest
      */
     login: string;
     /**
-     * 
+     * Пароль
      * @type {string}
      * @memberof LoginRequest
      */

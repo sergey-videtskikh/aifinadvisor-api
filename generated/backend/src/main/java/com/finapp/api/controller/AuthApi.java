@@ -5,10 +5,13 @@
  */
 package com.finapp.api.controller;
 
+import com.finapp.api.model.ChangePasswordRequest;
+import com.finapp.api.model.ChangePasswordResponse;
 import com.finapp.api.model.ErrorResponse;
 import com.finapp.api.model.JwtResponse;
 import com.finapp.api.model.LoginRequest;
 import com.finapp.api.model.RegisterRequest;
+import com.finapp.api.model.TelegramUserDto;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:12:26.454598+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Authentication", description = "the Authentication API")
 public interface AuthApi {
@@ -43,6 +46,57 @@ public interface AuthApi {
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
+
+    /**
+     * POST /auth/change-password : Change user password
+     *
+     * @param changePasswordRequest  (required)
+     * @return Password successfully changed (status code 200)
+     *         or Validation error (status code 400)
+     *         or Unauthorized access (status code 401)
+     */
+    @Operation(
+        operationId = "authChangePasswordPost",
+        summary = "Change user password",
+        tags = { "Authentication" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Password successfully changed", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ChangePasswordResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/auth/change-password",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<ChangePasswordResponse> authChangePasswordPost(
+        @Parameter(name = "ChangePasswordRequest", description = "", required = true) @Valid @RequestBody ChangePasswordRequest changePasswordRequest
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"newToken\" : \"newToken\", \"success\" : true, \"changedAt\" : \"2024-03-15T14:30:00Z\", \"message\" : \"Пароль успешно изменен\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
 
     /**
      * POST /auth/login : User login
@@ -77,7 +131,7 @@ public interface AuthApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"token\" : \"token\" }";
+                    String exampleString = "{ \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -116,6 +170,50 @@ public interface AuthApi {
     default ResponseEntity<Void> authRegisterPost(
         @Parameter(name = "RegisterRequest", description = "", required = true) @Valid @RequestBody RegisterRequest registerRequest
     ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * POST /auth/telegram : Telegram authentication
+     *
+     * @param telegramUserDto  (required)
+     * @return Successful authentication (status code 200)
+     *         or Telegram authentication error (status code 401)
+     */
+    @Operation(
+        operationId = "authTelegramPost",
+        summary = "Telegram authentication",
+        tags = { "Authentication" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Telegram authentication error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/auth/telegram",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<JwtResponse> authTelegramPost(
+        @Parameter(name = "TelegramUserDto", description = "", required = true) @Valid @RequestBody TelegramUserDto telegramUserDto
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

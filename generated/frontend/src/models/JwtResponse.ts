@@ -20,7 +20,7 @@ import { exists, mapValues } from '../runtime';
  */
 export interface JwtResponse {
     /**
-     * 
+     * JWT токен
      * @type {string}
      * @memberof JwtResponse
      */

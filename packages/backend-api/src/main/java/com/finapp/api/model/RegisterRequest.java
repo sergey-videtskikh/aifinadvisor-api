@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Arrays;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.util.NoSuchElementException;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import javax.validation.Valid;
@@ -18,7 +21,7 @@ import javax.annotation.Generated;
  * RegisterRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:12:26.454598+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
 public class RegisterRequest {
 
   private String login;
@@ -28,6 +31,10 @@ public class RegisterRequest {
   private String firstName;
 
   private String lastName;
+
+  private JsonNullable<String> phone = JsonNullable.<String>undefined();
+
+  private JsonNullable<String> telegramNickname = JsonNullable.<String>undefined();
 
   public RegisterRequest() {
     super();
@@ -49,11 +56,11 @@ public class RegisterRequest {
   }
 
   /**
-   * Get login
+   * Login (email) для входа
    * @return login
   */
   @NotNull @javax.validation.constraints.Email 
-  @Schema(name = "login", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "login", example = "ivan.ivanov@example.com", description = "Login (email) для входа", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("login")
   public String getLogin() {
     return login;
@@ -69,11 +76,11 @@ public class RegisterRequest {
   }
 
   /**
-   * Get password
+   * Пароль
    * @return password
   */
   @NotNull @Size(min = 8) 
-  @Schema(name = "password", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "password", example = "SecurePassword123", description = "Пароль", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("password")
   public String getPassword() {
     return password;
@@ -89,11 +96,11 @@ public class RegisterRequest {
   }
 
   /**
-   * Get firstName
+   * Имя
    * @return firstName
   */
   @NotNull @Size(min = 2, max = 50) 
-  @Schema(name = "firstName", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "firstName", example = "Иван", description = "Имя", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("firstName")
   public String getFirstName() {
     return firstName;
@@ -109,11 +116,11 @@ public class RegisterRequest {
   }
 
   /**
-   * Get lastName
+   * Фамилия
    * @return lastName
   */
   @NotNull @Size(min = 2, max = 50) 
-  @Schema(name = "lastName", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "lastName", example = "Иванов", description = "Фамилия", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("lastName")
   public String getLastName() {
     return lastName;
@@ -121,6 +128,46 @@ public class RegisterRequest {
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
+  }
+
+  public RegisterRequest phone(String phone) {
+    this.phone = JsonNullable.of(phone);
+    return this;
+  }
+
+  /**
+   * Номер телефона
+   * @return phone
+  */
+  
+  @Schema(name = "phone", example = "+79261234567", description = "Номер телефона", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("phone")
+  public JsonNullable<String> getPhone() {
+    return phone;
+  }
+
+  public void setPhone(JsonNullable<String> phone) {
+    this.phone = phone;
+  }
+
+  public RegisterRequest telegramNickname(String telegramNickname) {
+    this.telegramNickname = JsonNullable.of(telegramNickname);
+    return this;
+  }
+
+  /**
+   * Telegram никнейм
+   * @return telegramNickname
+  */
+  
+  @Schema(name = "telegramNickname", example = "ivan_ivanov", description = "Telegram никнейм", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("telegramNickname")
+  public JsonNullable<String> getTelegramNickname() {
+    return telegramNickname;
+  }
+
+  public void setTelegramNickname(JsonNullable<String> telegramNickname) {
+    this.telegramNickname = telegramNickname;
   }
 
   @Override
@@ -135,12 +182,25 @@ public class RegisterRequest {
     return Objects.equals(this.login, registerRequest.login) &&
         Objects.equals(this.password, registerRequest.password) &&
         Objects.equals(this.firstName, registerRequest.firstName) &&
-        Objects.equals(this.lastName, registerRequest.lastName);
+        Objects.equals(this.lastName, registerRequest.lastName) &&
+        equalsNullable(this.phone, registerRequest.phone) &&
+        equalsNullable(this.telegramNickname, registerRequest.telegramNickname);
+  }
+
+  private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
+    return a == b || (a != null && b != null && a.isPresent() && b.isPresent() && Objects.deepEquals(a.get(), b.get()));
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(login, password, firstName, lastName);
+    return Objects.hash(login, password, firstName, lastName, hashCodeNullable(phone), hashCodeNullable(telegramNickname));
+  }
+
+  private static <T> int hashCodeNullable(JsonNullable<T> a) {
+    if (a == null) {
+      return 1;
+    }
+    return a.isPresent() ? Arrays.deepHashCode(new Object[]{a.get()}) : 31;
   }
 
   @Override
@@ -151,6 +211,8 @@ public class RegisterRequest {
     sb.append("    password: ").append("*").append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
+    sb.append("    phone: ").append(toIndentedString(phone)).append("\n");
+    sb.append("    telegramNickname: ").append(toIndentedString(telegramNickname)).append("\n");
     sb.append("}");
     return sb.toString();
   }

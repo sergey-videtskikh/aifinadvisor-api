@@ -18,7 +18,7 @@ import javax.annotation.Generated;
  * LoginRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:12:26.454598+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
 public class LoginRequest {
 
   private String login;
@@ -43,11 +43,11 @@ public class LoginRequest {
   }
 
   /**
-   * Get login
+   * Login (email) для входа
    * @return login
   */
   @NotNull @javax.validation.constraints.Email 
-  @Schema(name = "login", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "login", example = "ivan.ivanov@example.com", description = "Login (email) для входа", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("login")
   public String getLogin() {
     return login;
@@ -63,11 +63,11 @@ public class LoginRequest {
   }
 
   /**
-   * Get password
+   * Пароль
    * @return password
   */
-  @NotNull 
-  @Schema(name = "password", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Size(min = 8) 
+  @Schema(name = "password", example = "SecurePassword123", description = "Пароль", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("password")
   public String getPassword() {
     return password;

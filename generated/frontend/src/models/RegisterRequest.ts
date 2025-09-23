@@ -20,29 +20,41 @@ import { exists, mapValues } from '../runtime';
  */
 export interface RegisterRequest {
     /**
-     * 
+     * Login (email) для входа
      * @type {string}
      * @memberof RegisterRequest
      */
     login: string;
     /**
-     * 
+     * Пароль
      * @type {string}
      * @memberof RegisterRequest
      */
     password: string;
     /**
-     * 
+     * Имя
      * @type {string}
      * @memberof RegisterRequest
      */
     firstName: string;
     /**
-     * 
+     * Фамилия
      * @type {string}
      * @memberof RegisterRequest
      */
     lastName: string;
+    /**
+     * Номер телефона
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    phone?: string | null;
+    /**
+     * Telegram никнейм
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    telegramNickname?: string | null;
 }
 
 /**
@@ -72,6 +84,8 @@ export function RegisterRequestFromJSONTyped(json: any, ignoreDiscriminator: boo
         'password': json['password'],
         'firstName': json['firstName'],
         'lastName': json['lastName'],
+        'phone': !exists(json, 'phone') ? undefined : json['phone'],
+        'telegramNickname': !exists(json, 'telegramNickname') ? undefined : json['telegramNickname'],
     };
 }
 
@@ -88,6 +102,8 @@ export function RegisterRequestToJSON(value?: RegisterRequest | null): any {
         'password': value.password,
         'firstName': value.firstName,
         'lastName': value.lastName,
+        'phone': value.phone,
+        'telegramNickname': value.telegramNickname,
     };
 }
 

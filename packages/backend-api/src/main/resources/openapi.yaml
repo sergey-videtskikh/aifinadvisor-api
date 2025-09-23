@@ -68,18 +68,86 @@ paths:
       x-accepts: application/json
       x-tags:
       - tag: Authentication
+  /auth/telegram:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUserDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+          description: Successful authentication
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Telegram authentication error
+      security: []
+      summary: Telegram authentication
+      tags:
+      - Authentication
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
+  /auth/change-password:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePasswordResponse'
+          description: Password successfully changed
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Validation error
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized access
+      summary: Change user password
+      tags:
+      - Authentication
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
 components:
   schemas:
     LoginRequest:
       example:
-        password: password
-        login: login
+        password: SecurePassword123
+        login: ivan.ivanov@example.com
       properties:
         login:
+          description: Login (email) для входа
+          example: ivan.ivanov@example.com
           format: email
           type: string
         password:
+          description: Пароль
+          example: SecurePassword123
           format: password
+          minLength: 8
           type: string
       required:
       - login
@@ -87,25 +155,45 @@ components:
       type: object
     RegisterRequest:
       example:
-        firstName: firstName
-        lastName: lastName
-        password: password
-        login: login
+        firstName: Иван
+        lastName: Иванов
+        password: SecurePassword123
+        phone: "+79261234567"
+        telegramNickname: ivan_ivanov
+        login: ivan.ivanov@example.com
       properties:
         login:
+          description: Login (email) для входа
+          example: ivan.ivanov@example.com
           format: email
           type: string
         password:
+          description: Пароль
+          example: SecurePassword123
           format: password
           minLength: 8
           type: string
         firstName:
+          description: Имя
+          example: Иван
           maxLength: 50
           minLength: 2
           type: string
         lastName:
+          description: Фамилия
+          example: Иванов
           maxLength: 50
           minLength: 2
+          type: string
+        phone:
+          description: Номер телефона
+          example: "+79261234567"
+          nullable: true
+          type: string
+        telegramNickname:
+          description: Telegram никнейм
+          example: ivan_ivanov
+          nullable: true
           type: string
       required:
       - firstName
@@ -115,9 +203,106 @@ components:
       type: object
     JwtResponse:
       example:
-        token: token
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       properties:
         token:
+          description: JWT токен
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          type: string
+      type: object
+    TelegramUserDto:
+      example:
+        last_name: last_name
+        auth_date: 6
+        id: 0
+        photo_url: https://openapi-generator.tech
+        first_name: first_name
+        hash: hash
+        username: username
+      properties:
+        id:
+          description: Telegram User ID
+          format: int64
+          type: integer
+        first_name:
+          description: Имя пользователя из Telegram
+          type: string
+        last_name:
+          description: Фамилия пользователя из Telegram
+          nullable: true
+          type: string
+        username:
+          description: Username пользователя в Telegram
+          nullable: true
+          type: string
+        photo_url:
+          description: URL фотографии профиля
+          format: uri
+          nullable: true
+          type: string
+        auth_date:
+          description: Unix timestamp авторизации
+          format: int64
+          type: integer
+        hash:
+          description: Хеш для проверки подлинности данных
+          type: string
+      required:
+      - auth_date
+      - first_name
+      - hash
+      - id
+      type: object
+    ChangePasswordRequest:
+      example:
+        newPassword: NewSecurePassword123!
+        confirmPassword: NewSecurePassword123!
+        currentPassword: currentSecretPassword123
+      properties:
+        currentPassword:
+          description: Текущий пароль пользователя для подтверждения
+          example: currentSecretPassword123
+          format: password
+          type: string
+        newPassword:
+          description: Новый пароль
+          example: NewSecurePassword123!
+          format: password
+          maxLength: 128
+          minLength: 8
+          type: string
+        confirmPassword:
+          description: Подтверждение нового пароля
+          example: NewSecurePassword123!
+          format: password
+          type: string
+      required:
+      - currentPassword
+      - newPassword
+      type: object
+    ChangePasswordResponse:
+      example:
+        newToken: newToken
+        success: true
+        changedAt: 2024-03-15T14:30:00Z
+        message: Пароль успешно изменен
+      properties:
+        success:
+          description: Флаг успешного изменения пароля
+          example: true
+          type: boolean
+        message:
+          description: Сообщение об успешном изменении пароля
+          example: Пароль успешно изменен
+          type: string
+        changedAt:
+          description: Дата и время изменения пароля
+          example: 2024-03-15T14:30:00Z
+          format: date-time
+          type: string
+        newToken:
+          description: "Новый JWT токен, если требуется обновление сессии"
+          nullable: true
           type: string
       type: object
     ErrorResponse:
