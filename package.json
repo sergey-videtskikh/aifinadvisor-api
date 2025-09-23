@@ -16,7 +16,7 @@
     "prepare:packages": "npm run generate:all && npm run copy:packages",
     "copy:packages": "npm run copy:backend && npm run copy:frontend",
     "copy:backend": "rimraf packages/backend-api/src && cp -r generated/backend/src packages/backend-api/ && cp generated/backend/pom.xml packages/backend-api/",
-    "copy:frontend": "rimraf packages/frontend-api/src && cp -r generated/frontend/* packages/frontend-api/",
+    "copy:frontend": "rimraf packages/frontend-api/src && mkdir -p packages/frontend-api/src && cp -rv generated/frontend/src/* packages/frontend-api/src/ && cp -rv generated/frontend/package.json packages/frontend-api/ && cp -rv generated/frontend/tsconfig* packages/frontend-api/ && echo 'Frontend files copied successfully'",
     "mock:server": "prism mock openapi.yaml --host 0.0.0.0 --port 4010",
     "mock:server:dynamic": "prism mock openapi.yaml --host 0.0.0.0 --port 4010 --dynamic",
     "build:packages": "npm run prepare:packages && npm run build:frontend-package",
@@ -44,5 +44,9 @@
   },
   "keywords": ["openapi", "swagger", "api", "codegen", "library"],
   "author": "sergey-vsv",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  }
 }
