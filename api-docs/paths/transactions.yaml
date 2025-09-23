@@ -1,0 +1,213 @@
+# Transaction management endpoints
+/api/v1/transactions:
+  get:
+    tags: [ Транзакции ]
+    summary: Получить список транзакций
+    description: "Возвращает пагинированный список транзакций с возможностью фильтрации по различным параметрам."
+    parameters:
+      - name: page
+        in: query
+        description: "Номер страницы (начиная с 0)"
+        required: false
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: "Размер страницы"
+        required: false
+        schema:
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 100
+      - name: startDate
+        in: query
+        description: "Начальная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: "Конечная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: categoryId
+        in: query
+        description: "ID категории для фильтрации"
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: type
+        in: query
+        description: "Тип транзакции"
+        required: false
+        schema:
+          type: string
+          enum: [ INCOME, EXPENSE ]
+      - name: excluded
+        in: query
+        description: "Включать исключенные транзакции"
+        required: false
+        schema:
+          type: boolean
+          default: false
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/transactions.yaml#/PagedTransactionResponse'
+      '400':
+        description: Некорректные параметры запроса
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+  post:
+    tags: [ Транзакции ]
+    summary: Добавить ручную транзакцию
+    description: "Создает новую транзакцию с указанными параметрами."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transactions.yaml#/CreateTransactionRequest'
+    responses:
+      '201':
+        description: Транзакция успешно создана
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/transactions.yaml#/TransactionResponse'
+      '400':
+        description: Ошибка валидации данных
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/transactions/{id}:
+  get:
+    tags: [ Транзакции ]
+    summary: Получить транзакцию по ID
+    description: "Возвращает данные транзакции по её идентификатору."
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Транзакция найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/transactions.yaml#/TransactionResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '403':
+        description: Доступ запрещен (транзакция принадлежит другому пользователю)
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Транзакция не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+  patch:
+    tags: [ Транзакции ]
+    summary: Частично обновить транзакцию
+    description: "Обновляет указанные поля существующей транзакции."
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transactions.yaml#/UpdateTransactionRequest'
+    responses:
+      '200':
+        description: Транзакция успешно обновлена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/transactions.yaml#/TransactionResponse'
+      '400':
+        description: Ошибка валидации данных
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Транзакция не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+  delete:
+    tags: [ Транзакции ]
+    summary: Удалить транзакцию
+    description: "Удаляет транзакцию по её ID."
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Транзакция успешно удалена
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Транзакция не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'

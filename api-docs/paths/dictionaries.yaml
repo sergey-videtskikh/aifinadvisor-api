@@ -1,0 +1,138 @@
+# Dictionary and reference data endpoints
+/api/v1/dictionaries/currencies:
+  get:
+    tags: [ Словари и справочники ]
+    summary: Получить справочник валют
+    description: Возвращает список всех доступных валют в системе.
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/dictionaries.yaml#/Currency'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/dictionaries/user-categories:
+  get:
+    tags: [ Словари и справочники ]
+    summary: Получить список категорий пользователя
+    description: "Возвращает персональный иерархический список категорий (доходов и расходов) для текущего пользователя. Если список пуст, он будет создан на основе шаблона по умолчанию. Этот эндпоинт предназначен для чтения списка категорий (например, для селектов в UI)."
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/categories.yaml#/CategoryDto'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/dictionaries/default-categories:
+  get:
+    tags: [ Словари и справочники ]
+    summary: Получить шаблон дефолтных категорий
+    description: "Возвращает системный шаблон категорий по умолчанию, которые используются для создания персональных категорий новых пользователей. Полезно для предпросмотра доступных категорий или сброса к дефолтным значениям."
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/dictionaries.yaml#/DefaultCategoryDto'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/dictionaries/category-icons:
+  get:
+    tags: [ Словари и справочники ]
+    summary: Получить доступные иконки для категорий
+    description: |
+      Возвращает список всех доступных иконок для категорий с их ссылками и дефолтными цветами.
+      
+      **Возможности:**
+      - Полный список иконок с URL для загрузки SVG
+      - Группировка по типам (FINANCE, FOOD, TRANSPORT и др.)
+      - Рекомендуемые цвета для каждой иконки
+      - Теги для поиска и фильтрации
+      - Локализованные названия иконок
+      
+      **Использование:**
+      - Для выбора иконки при создании/редактировании категории
+      - Для отображения selector'а иконок в UI
+      - Для предпросмотра иконки с дефолтным цветом
+    parameters:
+      - name: category
+        in: query
+        description: Фильтр по типу иконок
+        required: false
+        schema:
+          type: string
+          enum: [ FINANCE, FOOD, TRANSPORT, SHOPPING, ENTERTAINMENT, HEALTH, HOME, WORK, TRAVEL, OTHER ]
+        example: FINANCE
+      - name: search
+        in: query
+        description: Поиск по названию или тегам иконки
+        required: false
+        schema:
+          type: string
+          minLength: 2
+        example: "деньги"
+      - name: limit
+        in: query
+        description: Максимальное количество иконок в ответе
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 100
+        example: 50
+    responses:
+      '200':
+        description: Список доступных иконок успешно получен
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/dictionaries.yaml#/CategoryIconsResponse'
+      '400':
+        description: |
+          Некорректные параметры запроса:
+          - Неподдерживаемая категория
+          - Слишком короткий поисковый запрос
+          - Некорректное значение limit
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '500':
+        description: Внутренняя ошибка сервера
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'

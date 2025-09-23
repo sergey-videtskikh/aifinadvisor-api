@@ -1,0 +1,215 @@
+# Analytics endpoints
+/api/v1/analytics:
+  get:
+    tags: [ Аналитика ]
+    summary: Получить аналитическую информацию
+    description: "Возвращает аналитическую информацию о доходах, расходах, балансе и последних транзакциях за указанный период. По умолчанию, период составляет последний год."
+    parameters:
+      - name: startDate
+        in: query
+        description: "Начальная дата периода в формате YYYY-MM-DD. Если не указана, используется дата год назад от текущей."
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: "Конечная дата периода в формате YYYY-MM-DD. Если не указана, используется текущая дата."
+        required: false
+        schema:
+          type: string
+          format: date
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/analytics.yaml#/AnalyticsResponse'
+      '400':
+        description: Некорректные параметры запроса
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/analytics/categories:
+  get:
+    tags: [ Аналитика ]
+    summary: Получить сводку по категориям
+    description: "Возвращает аналитическую информацию по категориям с суммами доходов и расходов, сортировкой и фильтрацией."
+    parameters:
+      - name: startDate
+        in: query
+        description: "Начальная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: "Конечная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: type
+        in: query
+        description: "Тип транзакций для анализа"
+        required: false
+        schema:
+          type: string
+          enum: [ INCOME, EXPENSE ]
+      - name: categoryIds
+        in: query
+        description: "Список ID категорий для фильтрации (через запятую)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "Поле для сортировки"
+        required: false
+        schema:
+          type: string
+          enum: [ amount, category ]
+          default: amount
+      - name: sortOrder
+        in: query
+        description: "Порядок сортировки"
+        required: false
+        schema:
+          type: string
+          enum: [ asc, desc ]
+          default: desc
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/analytics.yaml#/CategoryAnalyticsResponse'
+      '400':
+        description: Некорректные параметры запроса
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/analytics/summary:
+  get:
+    tags: [ Аналитика ]
+    summary: Получить сводку по транзакциям за период
+    description: "Возвращает общую информацию о транзакциях за указанный период: количество, баланс, доходы, расходы."
+    parameters:
+      - name: startDate
+        in: query
+        description: "Начальная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: "Конечная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: type
+        in: query
+        description: "Тип транзакций для анализа"
+        required: false
+        schema:
+          type: string
+          enum: [ INCOME, EXPENSE ]
+      - name: categoryIds
+        in: query
+        description: "Список ID категорий для фильтрации (через запятую)"
+        required: false
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/analytics.yaml#/PeriodSummaryResponse'
+      '400':
+        description: Некорректные параметры запроса
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/analytics/daily:
+  get:
+    tags: [ Аналитика ]
+    summary: Получить суммы транзакций по дням
+    description: "Возвращает агрегированные данные по транзакциям за каждый день в указанном периоде."
+    parameters:
+      - name: startDate
+        in: query
+        description: "Начальная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: "Конечная дата периода в формате YYYY-MM-DD"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: type
+        in: query
+        description: "Тип транзакций для анализа"
+        required: false
+        schema:
+          type: string
+          enum: [ INCOME, EXPENSE ]
+      - name: categoryIds
+        in: query
+        description: "Список ID категорий для фильтрации (через запятую)"
+        required: false
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Успешный ответ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/analytics.yaml#/DailyTransactionsResponse'
+      '400':
+        description: Некорректные параметры запроса
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'

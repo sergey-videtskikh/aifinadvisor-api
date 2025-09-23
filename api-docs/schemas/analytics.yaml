@@ -1,0 +1,99 @@
+# Analytics-related schemas
+AnalyticsMetrics:
+  type: object
+  properties:
+    income: { type: number, format: double, description: "Сумма доходов за период" }
+    expense: { type: number, format: double, description: "Сумма расходов за период" }
+    balance: { type: number, format: double, description: "Итоговый баланс (доходы - расходы)" }
+
+AnalyticsResponse:
+  type: object
+  properties:
+    metrics: 
+      type: object
+      properties:
+        income: { type: number, format: double, description: "Сумма доходов за период" }
+        expense: { type: number, format: double, description: "Сумма расходов за период" }
+        balance: { type: number, format: double, description: "Итоговый баланс (доходы - расходы)" }
+    recentTransactions:
+      type: array
+      items:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          amount: { type: number, format: double }
+          date: { type: string, format: date }
+          category: 
+            type: object
+            properties:
+              id: { type: string }
+              name: { type: string }
+              type: 
+                type: string
+                enum: [ INCOME, EXPENSE ]
+              parentId: { type: string, nullable: true }
+              icon: { type: string, description: "Название иконки из Solar Icons" }
+              iconColor: { type: string, description: "Цвет иконки в формате HEX" }
+          name: { type: string }
+          type: 
+            type: string
+            enum: [ INCOME, EXPENSE ]
+          accountId: { type: string, format: uuid }
+          excluded: { type: boolean }
+
+# Category Analytics
+CategoryAnalyticsResponse:
+  type: object
+  properties:
+    categories:
+      type: array
+      items:
+        type: object
+        properties:
+          categoryId: { type: string, description: "ID категории" }
+          categoryName: { type: string, description: "Название категории" }
+          type:
+            type: string
+            enum: [ INCOME, EXPENSE ]
+            description: "Тип транзакции"
+          icon: { type: string, description: "Название иконки из Solar Icons" }
+          iconColor: { type: string, description: "Цвет иконки в формате HEX" }
+          totalAmount: { type: number, format: double, description: "Общая сумма по категории" }
+          transactionCount: { type: integer, description: "Количество транзакций" }
+
+# Period Summary Analytics  
+PeriodSummaryResponse:
+  type: object
+  properties:
+    period:
+      type: object
+      properties:
+        startDate: { type: string, format: date, description: "Начальная дата периода" }
+        endDate: { type: string, format: date, description: "Конечная дата периода" }
+    summary:
+      type: object
+      properties:
+        totalTransactions: { type: integer, description: "Общее количество транзакций" }
+        totalIncome: { type: number, format: double, description: "Общая сумма доходов" }
+        totalExpense: { type: number, format: double, description: "Общая сумма расходов" }
+        balance: { type: number, format: double, description: "Баланс (доходы - расходы)" }
+
+# Daily Transactions Analytics
+DailyTransactionsResponse:
+  type: object
+  properties:
+    period:
+      type: object
+      properties:
+        startDate: { type: string, format: date, description: "Начальная дата периода" }
+        endDate: { type: string, format: date, description: "Конечная дата периода" }
+    dailyData:
+      type: array
+      items:
+        type: object
+        properties:
+          date: { type: string, format: date, description: "Дата" }
+          totalAmount: { type: number, format: double, description: "Общая сумма транзакций за день" }
+          incomeAmount: { type: number, format: double, description: "Сумма доходов за день" }
+          expenseAmount: { type: number, format: double, description: "Сумма расходов за день" }
+          transactionCount: { type: integer, description: "Количество транзакций за день" }

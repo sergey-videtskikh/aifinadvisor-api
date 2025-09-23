@@ -1,0 +1,150 @@
+# Import/Export related schemas for Excel files
+ImportTransactionRequest:
+  type: object
+  required: [ file ]
+  properties:
+    file:
+      type: string
+      format: binary
+      description: "Excel файл (.xlsx) с транзакциями для импорта"
+    skipErrors:
+      type: boolean
+      default: false
+      description: "Пропускать строки с ошибками и продолжать импорт"
+    dryRun:
+      type: boolean
+      default: false
+      description: "Режим предварительного просмотра (не сохранять данные)"
+
+ImportTransactionResponse:
+  type: object
+  properties:
+    importId:
+      type: string
+      format: uuid
+      description: "Уникальный идентификатор операции импорта"
+    status:
+      type: string
+      enum: [SUCCESS, PARTIAL_SUCCESS, FAILED, PROCESSING]
+      description: "Статус операции импорта"
+    totalRows:
+      type: integer
+      description: "Общее количество строк в файле (исключая заголовок)"
+    successfulRows:
+      type: integer
+      description: "Количество успешно обработанных строк"
+    errorRows:
+      type: integer
+      description: "Количество строк с ошибками"
+    warnings:
+      type: array
+      items:
+        $ref: '#/ImportWarning'
+      description: "Предупреждения процесса импорта"
+    errors:
+      type: array
+      items:
+        $ref: '#/ImportError'
+      description: "Ошибки процесса импорта"
+    importedAt:
+      type: string
+      format: date-time
+      description: "Дата и время импорта"
+    processingTimeMs:
+      type: integer
+      format: int64
+      description: "Время обработки в миллисекундах"
+
+ImportWarning:
+  type: object
+  properties:
+    row:
+      type: integer
+      description: "Номер строки в Excel файле"
+    message:
+      type: string
+      description: "Текст предупреждения"
+    field:
+      type: string
+      description: "Поле, к которому относится предупреждение"
+
+ImportError:
+  type: object
+  properties:
+    row:
+      type: integer
+      description: "Номер строки в Excel файле"
+    message:
+      type: string
+      description: "Описание ошибки"
+    field:
+      type: string
+      description: "Поле, в котором произошла ошибка"
+    value:
+      type: string
+      description: "Некорректное значение"
+
+ExcelTemplateResponse:
+  type: string
+  format: binary
+  description: "Excel файл шаблона для заполнения транзакций"
+
+ImportHistoryResponse:
+  type: object
+  properties:
+    content:
+      type: array
+      items:
+        $ref: '#/ImportBatchSummary'
+      description: "Список операций импорта"
+    totalElements:
+      type: integer
+      format: int64
+      description: "Общее количество операций импорта"
+    totalPages:
+      type: integer
+      description: "Общее количество страниц"
+    size:
+      type: integer
+      description: "Размер страницы"
+    number:
+      type: integer
+      description: "Номер текущей страницы (начиная с 0)"
+    first:
+      type: boolean
+      description: "Является ли страница первой"
+    last:
+      type: boolean
+      description: "Является ли страница последней"
+
+ImportBatchSummary:
+  type: object
+  properties:
+    importId:
+      type: string
+      format: uuid
+      description: "Идентификатор операции импорта"
+    fileName:
+      type: string
+      description: "Имя загруженного файла"
+    status:
+      type: string
+      enum: [SUCCESS, PARTIAL_SUCCESS, FAILED, PROCESSING]
+      description: "Статус операции"
+    totalRows:
+      type: integer
+      description: "Общее количество строк"
+    successfulRows:
+      type: integer
+      description: "Успешно обработанных строк"
+    errorRows:
+      type: integer
+      description: "Строк с ошибками"
+    importedAt:
+      type: string
+      format: date-time
+      description: "Дата и время импорта"
+    processingTimeMs:
+      type: integer
+      format: int64
+      description: "Время обработки в миллисекундах"

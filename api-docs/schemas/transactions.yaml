@@ -1,0 +1,70 @@
+# Transaction-related schemas
+TransactionType:
+  type: string
+  enum: [ INCOME, EXPENSE ]
+
+TransactionResponse:
+  type: object
+  properties:
+    id: { type: string, format: uuid }
+    amount: { type: number, format: double }
+    date: { type: string, format: date }
+    category: 
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: 
+          type: string
+          enum: [ INCOME, EXPENSE ]
+        parentId: { type: string, nullable: true }
+    name: { type: string }
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+    accountId: { type: string, format: uuid }
+    excluded: { type: boolean }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+
+PagedTransactionResponse:
+  type: object
+  properties:
+    content:
+      type: array
+      items:
+        $ref: '#/TransactionResponse'
+    totalElements: { type: integer, format: int64 }
+    totalPages: { type: integer }
+    size: { type: integer }
+    number: { type: integer }
+    numberOfElements: { type: integer }
+    first: { type: boolean }
+    last: { type: boolean }
+
+CreateTransactionRequest:
+  type: object
+  required: [ amount, date, categoryId, name, type, accountId ]
+  properties:
+    amount: { type: number, format: double }
+    date: { type: string, format: date }
+    categoryId: { type: string, format: uuid }
+    name: { type: string, minLength: 1, maxLength: 100 }
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+    accountId: { type: string, format: uuid }
+    excluded: { type: boolean, default: false }
+
+UpdateTransactionRequest:
+  type: object
+  properties:
+    amount: { type: number, format: double }
+    date: { type: string, format: date }
+    categoryId: { type: string, format: uuid }
+    name: { type: string, minLength: 1, maxLength: 100 }
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+    accountId: { type: string, format: uuid }
+    excluded: { type: boolean }

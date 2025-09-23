@@ -1,0 +1,124 @@
+# Dictionary-related schemas
+Currency:
+  type: object
+  properties:
+    id: { type: string }
+    code: { type: string, example: "RUB" }
+    name: { type: string, example: "Российский рубль" }
+    symbol: { type: string, example: "₽" }
+
+DefaultCategoryDto:
+  type: object
+  description: "Дефолтная категория из системного шаблона"
+  properties:
+    id: 
+      type: string
+      description: "Уникальный идентификатор дефолтной категории"
+    name: 
+      type: string
+      description: "Название категории"
+      example: "Продукты питания"
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+      description: "Тип категории: доход или расход"
+    parentId: 
+      type: string
+      nullable: true
+      description: "ID родительской категории для подкатегорий"
+    icon: 
+      type: string
+      description: "Название иконки из Solar Icons (например: solar:bag-2-line-duotone)"
+      example: "solar:bag-2-line-duotone"
+    iconColor: 
+      type: string
+      description: "Цвет иконки в формате HEX"
+      example: "#10B981"
+    isTemplate:
+      type: boolean
+      description: "Флаг, указывающий что это шаблонная категория"
+      example: true
+    children:
+      type: array
+      description: "Подкатегории (если есть)"
+      items:
+        type: object
+        properties:
+          id: { type: string }
+          name: { type: string }
+          type: 
+            type: string
+            enum: [ INCOME, EXPENSE ]
+          parentId: { type: string, nullable: true }
+          icon: { type: string, description: "Название иконки из Solar Icons" }
+          iconColor: { type: string, description: "Цвет иконки в формате HEX" }
+          isTemplate: { type: boolean, example: true }
+
+CategoryIconDto:
+  type: object
+  description: "Доступная иконка для категории"
+  properties:
+    name:
+      type: string
+      description: "Название иконки из Solar Icons"
+      example: "solar:wallet-money-line-duotone"
+    displayName:
+      type: string
+      description: "Отображаемое название иконки для пользователя"
+      example: "Кошелек"
+    iconUrl:
+      type: string
+      format: uri
+      description: "URL для получения SVG иконки"
+      example: "https://api.iconify.design/solar/wallet-money-line-duotone.svg"
+    defaultColor:
+      type: string
+      description: "Рекомендуемый цвет иконки в формате HEX"
+      example: "#3B82F6"
+    category:
+      type: string
+      description: "Категория иконки для группировки в UI"
+      enum: [ FINANCE, FOOD, TRANSPORT, SHOPPING, ENTERTAINMENT, HEALTH, HOME, WORK, TRAVEL, OTHER ]
+      example: "FINANCE"
+    tags:
+      type: array
+      description: "Теги для поиска и фильтрации иконок"
+      items:
+        type: string
+      example: ["деньги", "финансы", "кошелек", "платежи"]
+
+CategoryIconsResponse:
+  type: object
+  description: "Список доступных иконок для категорий, сгруппированных по типам"
+  properties:
+    icons:
+      type: array
+      description: "Список всех доступных иконок"
+      items:
+        $ref: '#/CategoryIconDto'
+    categories:
+      type: object
+      description: "Группировка иконок по категориям для удобства навигации в UI"
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/CategoryIconDto'
+      example:
+        FINANCE:
+          - name: "solar:wallet-money-line-duotone"
+            displayName: "Кошелек"
+            iconUrl: "https://api.iconify.design/solar/wallet-money-line-duotone.svg"
+            defaultColor: "#3B82F6"
+            category: "FINANCE"
+            tags: ["деньги", "финансы"]
+        FOOD:
+          - name: "solar:cup-hot-line-duotone" 
+            displayName: "Еда"
+            iconUrl: "https://api.iconify.design/solar/cup-hot-line-duotone.svg"
+            defaultColor: "#F59E0B"
+            category: "FOOD"
+            tags: ["еда", "питание"]
+    totalCount:
+      type: integer
+      description: "Общее количество доступных иконок"
+      example: 150

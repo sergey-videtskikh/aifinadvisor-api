@@ -1,0 +1,124 @@
+# Receipt-related schemas
+ReceiptResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: "Уникальный идентификатор чека"
+    fileName:
+      type: string
+      description: "Оригинальное имя загруженного файла"
+    filePath:
+      type: string
+      description: "Путь к файлу в хранилище"
+    fileSize:
+      type: integer
+      format: int64
+      description: "Размер файла в байтах"
+    mimeType:
+      type: string
+      description: "MIME тип файла (image/jpeg, image/png, application/pdf)"
+    transactionId:
+      type: string
+      format: uuid
+      nullable: true
+      description: "ID связанной транзакции (опционально)"
+    uploadedAt:
+      type: string
+      format: date-time
+      description: "Дата и время загрузки чека"
+    createdAt:
+      type: string
+      format: date-time
+      description: "Дата создания записи"
+    updatedAt:
+      type: string
+      format: date-time
+      description: "Дата последнего обновления"
+
+PagedReceiptResponse:
+  type: object
+  properties:
+    content:
+      type: array
+      items:
+        $ref: '#/ReceiptResponse'
+      description: "Список чеков на текущей странице"
+    totalElements:
+      type: integer
+      format: int64
+      description: "Общее количество чеков"
+    totalPages:
+      type: integer
+      description: "Общее количество страниц"
+    size:
+      type: integer
+      description: "Размер страницы"
+    number:
+      type: integer
+      description: "Номер текущей страницы (начиная с 0)"
+    numberOfElements:
+      type: integer
+      description: "Количество элементов на текущей странице"
+    first:
+      type: boolean
+      description: "Является ли страница первой"
+    last:
+      type: boolean
+      description: "Является ли страница последней"
+
+UploadReceiptRequest:
+  type: object
+  required: [ file ]
+  properties:
+    file:
+      type: string
+      format: binary
+      description: "Файл чека (изображение или PDF)"
+    transactionId:
+      type: string
+      format: uuid
+      nullable: true
+      description: "ID транзакции, к которой привязывается чек (опционально)"
+
+UploadReceiptResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: "ID загруженного чека"
+    fileName:
+      type: string
+      description: "Имя загруженного файла"
+    fileSize:
+      type: integer
+      format: int64
+      description: "Размер файла в байтах"
+    mimeType:
+      type: string
+      description: "MIME тип файла"
+    transactionId:
+      type: string
+      format: uuid
+      nullable: true
+      description: "ID связанной транзакции"
+    uploadedAt:
+      type: string
+      format: date-time
+      description: "Дата и время загрузки"
+
+UpdateReceiptRequest:
+  type: object
+  properties:
+    transactionId:
+      type: string
+      format: uuid
+      nullable: true
+      description: "ID транзакции для привязки (null для отвязки)"
+
+ReceiptDownloadResponse:
+  type: string
+  format: binary
+  description: "Содержимое файла чека"

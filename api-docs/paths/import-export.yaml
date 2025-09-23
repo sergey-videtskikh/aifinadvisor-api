@@ -1,0 +1,251 @@
+# Import/Export endpoints for Excel files
+/api/v1/transactions/template:
+  get:
+    tags:
+      - Импорт/Экспорт транзакций
+    summary: Скачать Excel шаблон для импорта транзакций
+    description: |
+      Скачивает предварительно настроенный Excel файл шаблона для заполнения транзакций.
+      
+      **Структура шаблона:**
+      - Дата (формат: YYYY-MM-DD)
+      - Сумма (числовое значение)
+      - Тип (INCOME/EXPENSE) 
+      - Категория (название категории)
+      - Описание (текстовое описание транзакции)
+      - Счет (ID или название счета)
+      
+      **Примечания:**
+      - Первая строка содержит заголовки столбцов
+      - Вторая строка содержит примеры заполнения
+      - Файл содержит валидацию данных для некоторых столбцов
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Excel шаблон успешно сгенерирован
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              $ref: '../schemas/import-export.yaml#/ExcelTemplateResponse'
+        headers:
+          Content-Disposition:
+            description: Указывает браузеру скачать файл
+            schema:
+              type: string
+              example: "attachment; filename=transactions_template.xlsx"
+          Content-Type:
+            description: MIME тип Excel файла
+            schema:
+              type: string
+              example: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '500':
+        description: Внутренняя ошибка сервера
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/transactions/import:
+  post:
+    tags:
+      - Импорт/Экспорт транзакций
+    summary: Импортировать транзакции из Excel файла
+    description: |
+      Загружает и обрабатывает Excel файл с транзакциями. Поддерживает пакетную обработку 
+      и детальную отчетность по ошибкам.
+      
+      **Требования к файлу:**
+      - Формат: .xlsx (Excel 2007+)
+      - Максимальный размер: 10 МБ
+      - Максимальное количество строк: 10,000
+      - Обязательные столбцы: Дата, Сумма, Тип, Категория, Описание
+      
+      **Поддерживаемые режимы:**
+      - Обычный импорт: сохраняет валидные транзакции
+      - Предварительный просмотр (dryRun): проверяет данные без сохранения
+      - Пропуск ошибок (skipErrors): игнорирует невалидные строки
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '../schemas/import-export.yaml#/ImportTransactionRequest'
+    responses:
+      '200':
+        description: Файл успешно обработан (может содержать частичные ошибки)
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/import-export.yaml#/ImportTransactionResponse'
+      '400':
+        description: |
+          Некорректный запрос:
+          - Неподдерживаемый формат файла
+          - Файл поврежден или пуст
+          - Отсутствуют обязательные столбцы
+          - Превышен максимальный размер файла
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '413':
+        description: Размер файла превышает максимально допустимый (10 МБ)
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '422':
+        description: |
+          Файл содержит критические ошибки данных:
+          - Все строки содержат ошибки
+          - Неправильная структура файла
+          - Несовместимые типы данных
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/import-export.yaml#/ImportTransactionResponse'
+      '500':
+        description: Внутренняя ошибка сервера при обработке файла
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/transactions/import/history:
+  get:
+    tags:
+      - Импорт/Экспорт транзакций
+    summary: Получить историю импорта транзакций
+    description: |
+      Возвращает историю всех операций импорта для текущего пользователя с пагинацией.
+      Полезно для отслеживания статуса операций и диагностики проблем.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        description: Номер страницы (начиная с 0)
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        example: 0
+      - name: size
+        in: query
+        description: Количество элементов на странице
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        example: 20
+      - name: status
+        in: query
+        description: Фильтр по статусу операций импорта
+        required: false
+        schema:
+          type: string
+          enum: [SUCCESS, PARTIAL_SUCCESS, FAILED, PROCESSING]
+        example: SUCCESS
+      - name: from
+        in: query
+        description: Дата начала периода для фильтрации (формат yyyy-MM-dd)
+        required: false
+        schema:
+          type: string
+          format: date
+        example: "2024-01-01"
+      - name: to
+        in: query
+        description: Дата окончания периода для фильтрации (формат yyyy-MM-dd)
+        required: false
+        schema:
+          type: string
+          format: date
+        example: "2024-12-31"
+    responses:
+      '200':
+        description: История импорта успешно получена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/import-export.yaml#/ImportHistoryResponse'
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '500':
+        description: Внутренняя ошибка сервера
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/transactions/import/{importId}:
+  get:
+    tags:
+      - Импорт/Экспорт транзакций
+    summary: Получить детали конкретной операции импорта
+    description: |
+      Возвращает подробную информацию о конкретной операции импорта, включая 
+      все ошибки и предупреждения.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: importId
+        in: path
+        description: ID операции импорта
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Детали операции импорта получены
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/import-export.yaml#/ImportTransactionResponse'
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '403':
+        description: Доступ к операции импорта запрещен
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Операция импорта не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '500':
+        description: Внутренняя ошибка сервера
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'

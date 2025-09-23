@@ -1,0 +1,124 @@
+# Category management endpoints
+/api/v1/categories:
+  get:
+    tags: [ Категории ]
+    summary: Получить список всех категорий
+    description: "Возвращает иерархический список всех категорий пользователя"
+    responses:
+      '200':
+        description: Список категорий успешно получен
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/categories.yaml#/CategoryDto'
+      '401':
+        description: Пользователь не авторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+  post:
+    tags: [ Категории ]
+    summary: Создать новую категорию или подкатегорию
+    description: "Добавляет новую категорию. Для создания подкатегории необходимо указать parentId. Тип подкатегории должен совпадать с типом родителя."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/categories.yaml#/CreateCategoryRequest'
+    responses:
+      '201':
+        description: Категория успешно создана
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/categories.yaml#/CategoryDto'
+      '400':
+        description: "Ошибка валидации: неверный parentId, или тип подкатегории не совпадает с родительской"
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/categories/{id}:
+  patch:
+    tags: [ Категории ]
+    summary: Обновить название категории
+    description: Обновляет название существующей категории по её ID.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/categories.yaml#/UpdateCategoryRequest'
+    responses:
+      '200':
+        description: Категория успешно обновлена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/categories.yaml#/CategoryDto'
+      '400':
+        description: Ошибка валидации данных
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Категория не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+  delete:
+    tags: [ Категории ]
+    summary: Удалить категорию
+    description: "Удаляет категорию по её ID. Удаление невозможно, если у категории есть подкатегории."
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Категория успешно удалена
+      '400':
+        description: Удаление невозможно (есть подкатегории)
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '404':
+        description: Категория не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'

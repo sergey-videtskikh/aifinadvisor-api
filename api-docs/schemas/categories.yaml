@@ -1,0 +1,49 @@
+# Category-related schemas
+CategoryType:
+  type: string
+  enum: [ INCOME, EXPENSE ]
+
+CategoryDto:
+  type: object
+  properties:
+    id: { type: string }
+    name: { type: string }
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+    parentId: { type: string, nullable: true }
+    icon: { type: string, description: "Название иконки из Solar Icons (например: solar:wallet-money-line-duotone)" }
+    iconColor: { type: string, description: "Цвет иконки в формате HEX (например: #3B82F6)" }
+    children:
+      type: array
+      items:
+        type: object
+        properties:
+          id: { type: string }
+          name: { type: string }
+          type: 
+            type: string
+            enum: [ INCOME, EXPENSE ]
+          parentId: { type: string, nullable: true }
+          icon: { type: string, description: "Название иконки из Solar Icons" }
+          iconColor: { type: string, description: "Цвет иконки в формате HEX" }
+
+CreateCategoryRequest:
+  type: object
+  required: [ name, type ]
+  properties:
+    name: { type: string, minLength: 1, maxLength: 50 }
+    type: 
+      type: string
+      enum: [ INCOME, EXPENSE ]
+    parentId: { type: string, nullable: true }
+    icon: { type: string, description: "Название иконки из Solar Icons (опционально)" }
+    iconColor: { type: string, description: "Цвет иконки в формате HEX (опционально)" }
+
+UpdateCategoryRequest:
+  type: object
+  required: [ name ]
+  properties:
+    name: { type: string, minLength: 1, maxLength: 50 }
+    icon: { type: string, description: "Название иконки из Solar Icons (опционально)" }
+    iconColor: { type: string, description: "Цвет иконки в формате HEX (опционально)" }

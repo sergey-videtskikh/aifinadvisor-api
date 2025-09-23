@@ -1,0 +1,150 @@
+# Authentication endpoints
+/api/v1/auth/register:
+  post:
+    tags: [ Аутентификация ]
+    summary: Регистрация нового пользователя
+    security: [ ]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/RegisterRequest'
+    responses:
+      '201':
+        description: Пользователь успешно зарегистрирован
+      '400':
+        description: Ошибка валидации данных
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+
+/api/v1/auth/login:
+  post:
+    tags: [ Аутентификация ]
+    summary: Аутентификация по логину и паролю
+    security: [ ]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/LoginRequest'
+    responses:
+      '200':
+        description: Успешная аутентификация
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/JwtResponse'
+      '401':
+        description: Неверный логин или пароль
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/auth/logout:
+  post:
+    tags: [ Аутентификация ]
+    summary: Выход из системы
+    description: "Завершает сеанс пользователя. В текущей реализации JWT токены являются stateless, поэтому логика выхода реализуется на клиентской стороне путем удаления токена."
+    responses:
+      '204':
+        description: Успешный выход из системы
+      '401':
+        description: Неавторизованный доступ
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/auth/telegram:
+  post:
+    tags: [ Аутентификация ]
+    summary: Аутентификация через Telegram
+    security: [ ]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/TelegramUserDto'
+    responses:
+      '200':
+        description: Успешная аутентификация
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/JwtResponse'
+      '401':
+        description: Ошибка аутентификации через Telegram
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+
+/api/v1/auth/change-password:
+  post:
+    tags: [ Аутентификация ]
+    summary: Изменение пароля пользователя
+    description: |
+      Позволяет авторизованному пользователю изменить свой пароль.
+      
+      **Требования к новому паролю:**
+      - Минимум 8 символов
+      - Максимум 128 символов
+      - Должен содержать хотя бы одну заглавную букву
+      - Должен содержать хотя бы одну строчную букву
+      - Должен содержать хотя бы одну цифру
+      - Может содержать специальные символы
+      
+      **Безопасность:**
+      - Требуется авторизация (JWT токен)
+      - Необходимо подтверждение текущего пароля
+      - При успешной смене пароля рекомендуется перевыпуск JWT токена
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/ChangePasswordRequest'
+    responses:
+      '200':
+        description: Пароль успешно изменен
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/ChangePasswordResponse'
+      '400':
+        description: |
+          Ошибка валидации данных:
+          - Новый пароль не соответствует требованиям безопасности
+          - Поля newPassword и confirmPassword не совпадают
+          - Новый пароль совпадает с текущим
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ValidationErrorResponse'
+      '401':
+        description: |
+          Неавторизованный доступ:
+          - Отсутствует или недействителен JWT токен
+          - Неверный текущий пароль
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '429':
+        description: Превышено количество попыток изменения пароля
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
+      '500':
+        description: Внутренняя ошибка сервера
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ErrorResponse'
