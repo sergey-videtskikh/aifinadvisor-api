@@ -199,5 +199,12 @@ Cargo.lock
 *.crt
 secrets/
 config/secrets.yml
-/packages/
+
+# Generated intermediate files (should not be committed)
 /generated/
+
+# Package build outputs (commit source but not build artifacts)
+packages/*/dist/
+packages/*/target/
+packages/*/build/
+packages/*/src/
