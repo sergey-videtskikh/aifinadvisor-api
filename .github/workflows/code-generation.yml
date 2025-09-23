@@ -1,0 +1,134 @@
+name: Build and Publish API Libraries
+
+on:
+  push:
+    paths:
+      - 'api-docs/**'
+      - 'openapi.yaml'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'api-docs/**'
+      - 'openapi.yaml'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate OpenAPI spec
+        run: npm run validate
+
+      - name: Generate code and prepare packages
+        run: npm run prepare:packages
+
+      - name: Build frontend package
+        run: npm run build:frontend-package
+
+      - name: Determine version bump
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          else
+            echo "bump=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version and sync packages
+        if: steps.version.outputs.bump != 'none'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm run version:${{ steps.version.outputs.bump }}
+
+      - name: Publish Frontend Package to GitHub Packages
+        if: steps.version.outputs.bump != 'none'
+        run: npm run publish:frontend
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Maven settings
+        if: steps.version.outputs.bump != 'none'
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>" > ~/.m2/settings.xml
+
+      - name: Publish Backend Package to GitHub Packages
+        if: steps.version.outputs.bump != 'none'
+        run: npm run publish:backend
+
+      - name: Create Release
+        if: steps.version.outputs.bump != 'none'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## API Libraries Release v${{ env.NEW_VERSION }}
+
+            ### Published Packages:
+            - **Backend (Maven)**: `com.finapp:finapp-api-client:${{ env.NEW_VERSION }}`
+            - **Frontend (NPM)**: `@finapp/api-client@${{ env.NEW_VERSION }}`
+
+            ### Usage:
+
+            #### Backend (Maven)
+            ```xml
+            <dependency>
+                <groupId>com.finapp</groupId>
+                <artifactId>finapp-api-client</artifactId>
+                <version>${{ env.NEW_VERSION }}</version>
+            </dependency>
+            ```
+
+            #### Frontend (NPM)
+            ```bash
+            npm install @finapp/api-client@${{ env.NEW_VERSION }}
+            ```
+
+            ### Changes:
+            - Updated API models and interfaces
+            - Synced with latest OpenAPI specification
+          draft: false
+          prerelease: false
+
+      - name: Commit version updates
+        if: steps.version.outputs.bump != 'none'
+        run: |
+          git add .
+          git commit -m "chore: bump version to v${{ env.NEW_VERSION }}" || exit 0
+          git push

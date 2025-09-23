@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: FinApp API
+  description: API for financial application
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@finapp.com
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.finapp.com/api/v1
+    description: Production server
+
+paths:
+  # Auth endpoints
+  /auth/login:
+    $ref: './api-docs/paths/auth.yaml#/~1auth~1login'
+  /auth/register:
+    $ref: './api-docs/paths/auth.yaml#/~1auth~1register'
+  /auth/refresh:
+    $ref: './api-docs/paths/auth.yaml#/~1auth~1refresh'
+  /auth/logout:
+    $ref: './api-docs/paths/auth.yaml#/~1auth~1logout'
+
+  # User endpoints
+  /user/profile:
+    $ref: './api-docs/paths/user.yaml#/~1user~1profile'
+  /user/settings:
+    $ref: './api-docs/paths/user.yaml#/~1user~1settings'
+
+  # Categories endpoints
+  /categories:
+    $ref: './api-docs/paths/categories.yaml#/~1categories'
+  /categories/{id}:
+    $ref: './api-docs/paths/categories.yaml#/~1categories~1{id}'
+
+  # Transactions endpoints
+  /transactions:
+    $ref: './api-docs/paths/transactions.yaml#/~1transactions'
+  /transactions/{id}:
+    $ref: './api-docs/paths/transactions.yaml#/~1transactions~1{id}'
+  /transactions/search:
+    $ref: './api-docs/paths/transactions.yaml#/~1transactions~1search'
+
+  # Analytics endpoints
+  /analytics/summary:
+    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1summary'
+  /analytics/trends:
+    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1trends'
+  /analytics/categories:
+    $ref: './api-docs/paths/analytics.yaml#/~1analytics~1categories'
+
+  # Receipts endpoints
+  /receipts:
+    $ref: './api-docs/paths/receipts.yaml#/~1receipts'
+  /receipts/{id}:
+    $ref: './api-docs/paths/receipts.yaml#/~1receipts~1{id}'
+  /receipts/upload:
+    $ref: './api-docs/paths/receipts.yaml#/~1receipts~1upload'
+
+  # Import/Export endpoints
+  /import-export/export:
+    $ref: './api-docs/paths/import-export.yaml#/~1import-export~1export'
+  /import-export/import:
+    $ref: './api-docs/paths/import-export.yaml#/~1import-export~1import'
+
+  # Dictionaries endpoints
+  /dictionaries/currencies:
+    $ref: './api-docs/paths/dictionaries.yaml#/~1dictionaries~1currencies'
+  /dictionaries/countries:
+    $ref: './api-docs/paths/dictionaries.yaml#/~1dictionaries~1countries'
+
+components:
+  schemas:
+    # Common schemas
+    ErrorResponse:
+      $ref: './api-docs/schemas/common.yaml#/ErrorResponse'
+    ValidationErrorResponse:
+      $ref: './api-docs/schemas/common.yaml#/ValidationErrorResponse'
+    PaginationResponse:
+      $ref: './api-docs/schemas/common.yaml#/PaginationResponse'
+
+    # Auth schemas
+    LoginRequest:
+      $ref: './api-docs/schemas/auth.yaml#/LoginRequest'
+    LoginResponse:
+      $ref: './api-docs/schemas/auth.yaml#/LoginResponse'
+    RegisterRequest:
+      $ref: './api-docs/schemas/auth.yaml#/RegisterRequest'
+    RefreshTokenRequest:
+      $ref: './api-docs/schemas/auth.yaml#/RefreshTokenRequest'
+
+    # User schemas
+    UserProfile:
+      $ref: './api-docs/schemas/user.yaml#/UserProfile'
+    UserSettings:
+      $ref: './api-docs/schemas/user.yaml#/UserSettings'
+    UpdateUserProfileRequest:
+      $ref: './api-docs/schemas/user.yaml#/UpdateUserProfileRequest'
+
+    # Category schemas
+    Category:
+      $ref: './api-docs/schemas/categories.yaml#/Category'
+    CreateCategoryRequest:
+      $ref: './api-docs/schemas/categories.yaml#/CreateCategoryRequest'
+    UpdateCategoryRequest:
+      $ref: './api-docs/schemas/categories.yaml#/UpdateCategoryRequest'
+
+    # Transaction schemas
+    Transaction:
+      $ref: './api-docs/schemas/transactions.yaml#/Transaction'
+    CreateTransactionRequest:
+      $ref: './api-docs/schemas/transactions.yaml#/CreateTransactionRequest'
+    UpdateTransactionRequest:
+      $ref: './api-docs/schemas/transactions.yaml#/UpdateTransactionRequest'
+    TransactionSearchRequest:
+      $ref: './api-docs/schemas/transactions.yaml#/TransactionSearchRequest'
+
+    # Analytics schemas
+    AnalyticsSummary:
+      $ref: './api-docs/schemas/analytics.yaml#/AnalyticsSummary'
+    TrendData:
+      $ref: './api-docs/schemas/analytics.yaml#/TrendData'
+    CategoryAnalytics:
+      $ref: './api-docs/schemas/analytics.yaml#/CategoryAnalytics'
+
+    # Receipt schemas
+    Receipt:
+      $ref: './api-docs/schemas/receipts.yaml#/Receipt'
+    UploadReceiptRequest:
+      $ref: './api-docs/schemas/receipts.yaml#/UploadReceiptRequest'
+    ReceiptProcessingResult:
+      $ref: './api-docs/schemas/receipts.yaml#/ReceiptProcessingResult'
+
+    # Import/Export schemas
+    ExportRequest:
+      $ref: './api-docs/schemas/import-export.yaml#/ExportRequest'
+    ImportRequest:
+      $ref: './api-docs/schemas/import-export.yaml#/ImportRequest'
+    ExportResult:
+      $ref: './api-docs/schemas/import-export.yaml#/ExportResult'
+
+    # Dictionary schemas
+    Currency:
+      $ref: './api-docs/schemas/dictionaries.yaml#/Currency'
+    Country:
+      $ref: './api-docs/schemas/dictionaries.yaml#/Country'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

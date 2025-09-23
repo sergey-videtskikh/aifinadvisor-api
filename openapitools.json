@@ -1,0 +1,44 @@
+{
+  "generator-cli": {
+    "version": "7.2.0"
+  },
+  "generators": {
+    "spring": {
+      "generatorName": "spring",
+      "output": "./generated/backend",
+      "inputSpec": "./openapi.yaml",
+      "additionalProperties": {
+        "packageName": "com.finapp.api",
+        "basePackage": "com.finapp",
+        "modelPackage": "com.finapp.api.model",
+        "apiPackage": "com.finapp.api.controller",
+        "configPackage": "com.finapp.api.config",
+        "invokerPackage": "com.finapp.api.client",
+        "java8": "true",
+        "dateLibrary": "java8",
+        "useTags": "true",
+        "interfaceOnly": "true",
+        "skipDefaultInterface": "true",
+        "useSpringBoot3": "true"
+      },
+      "globalProperties": {
+        "models": "",
+        "apis": "",
+        "supportingFiles": ""
+      }
+    },
+    "typescript-fetch": {
+      "generatorName": "typescript-fetch",
+      "output": "./generated/frontend",
+      "inputSpec": "./openapi.yaml",
+      "additionalProperties": {
+        "typescriptThreePlus": "true",
+        "supportsES6": "true",
+        "npmName": "@finapp/api-client",
+        "npmVersion": "1.0.0",
+        "withInterfaces": "true",
+        "modelPropertyNaming": "camelCase"
+      }
+    }
+  }
+}
