@@ -18,7 +18,7 @@ import jakarta.annotation.Generated;
  * JwtResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T01:02:46.065405+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T01:21:06.005808+03:00[Europe/Moscow]")
 public class JwtResponse {
 
   private String token;
