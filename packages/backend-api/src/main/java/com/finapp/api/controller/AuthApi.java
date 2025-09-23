@@ -31,21 +31,81 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T00:35:58.108206+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Authentication", description = "the Authentication API")
 public interface AuthApi {
 
-    default Optional<NativeWebRequest> getRequest() {
-        return Optional.empty();
-    }
+    /**
+     * POST /auth/login : User login
+     *
+     * @param loginRequest  (required)
+     * @return Successful authentication (status code 200)
+     *         or Invalid credentials (status code 401)
+     */
+    @Operation(
+        operationId = "authenticateUser",
+        summary = "User login",
+        tags = { "Authentication" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/auth/login",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<JwtResponse> authenticateUser(
+        @Parameter(name = "LoginRequest", description = "", required = true) @Valid @RequestBody LoginRequest loginRequest
+    );
+
+
+    /**
+     * POST /auth/telegram : Telegram authentication
+     *
+     * @param telegramUserDto  (required)
+     * @return Successful authentication (status code 200)
+     *         or Telegram authentication error (status code 401)
+     */
+    @Operation(
+        operationId = "authenticateWithTelegram",
+        summary = "Telegram authentication",
+        tags = { "Authentication" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Telegram authentication error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/auth/telegram",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<JwtResponse> authenticateWithTelegram(
+        @Parameter(name = "TelegramUserDto", description = "", required = true) @Valid @RequestBody TelegramUserDto telegramUserDto
+    );
+
 
     /**
      * POST /auth/change-password : Change user password
@@ -56,7 +116,7 @@ public interface AuthApi {
      *         or Unauthorized access (status code 401)
      */
     @Operation(
-        operationId = "authChangePasswordPost",
+        operationId = "changeUserPassword",
         summary = "Change user password",
         tags = { "Authentication" },
         responses = {
@@ -81,65 +141,9 @@ public interface AuthApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<ChangePasswordResponse> authChangePasswordPost(
+    ResponseEntity<ChangePasswordResponse> changeUserPassword(
         @Parameter(name = "ChangePasswordRequest", description = "", required = true) @Valid @RequestBody ChangePasswordRequest changePasswordRequest
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"newToken\" : \"newToken\", \"success\" : true, \"changedAt\" : \"2024-03-15T14:30:00Z\", \"message\" : \"Пароль успешно изменен\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /auth/login : User login
-     *
-     * @param loginRequest  (required)
-     * @return Successful authentication (status code 200)
-     *         or Invalid credentials (status code 401)
-     */
-    @Operation(
-        operationId = "authLoginPost",
-        summary = "User login",
-        tags = { "Authentication" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/auth/login",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<JwtResponse> authLoginPost(
-        @Parameter(name = "LoginRequest", description = "", required = true) @Valid @RequestBody LoginRequest loginRequest
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
+    );
 
 
     /**
@@ -150,7 +154,7 @@ public interface AuthApi {
      *         or Validation error (status code 400)
      */
     @Operation(
-        operationId = "authRegisterPost",
+        operationId = "registerUser",
         summary = "User registration",
         tags = { "Authentication" },
         responses = {
@@ -167,55 +171,8 @@ public interface AuthApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> authRegisterPost(
+    ResponseEntity<Void> registerUser(
         @Parameter(name = "RegisterRequest", description = "", required = true) @Valid @RequestBody RegisterRequest registerRequest
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /auth/telegram : Telegram authentication
-     *
-     * @param telegramUserDto  (required)
-     * @return Successful authentication (status code 200)
-     *         or Telegram authentication error (status code 401)
-     */
-    @Operation(
-        operationId = "authTelegramPost",
-        summary = "Telegram authentication",
-        tags = { "Authentication" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Telegram authentication error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/auth/telegram",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<JwtResponse> authTelegramPost(
-        @Parameter(name = "TelegramUserDto", description = "", required = true) @Valid @RequestBody TelegramUserDto telegramUserDto
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
+    );
 
 }

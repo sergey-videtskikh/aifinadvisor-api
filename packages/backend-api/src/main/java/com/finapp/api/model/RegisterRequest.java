@@ -9,19 +9,19 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.util.NoSuchElementException;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
 import java.util.*;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * RegisterRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-23T22:56:18.795514+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T00:35:58.108206+03:00[Europe/Moscow]")
 public class RegisterRequest {
 
   private String login;
@@ -59,7 +59,7 @@ public class RegisterRequest {
    * Login (email) для входа
    * @return login
   */
-  @NotNull @javax.validation.constraints.Email 
+  @NotNull @jakarta.validation.constraints.Email 
   @Schema(name = "login", example = "ivan.ivanov@example.com", description = "Login (email) для входа", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("login")
   public String getLogin() {

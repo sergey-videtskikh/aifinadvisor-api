@@ -40,33 +40,168 @@ import {
     TelegramUserDtoToJSON,
 } from '../models/index';
 
-export interface AuthChangePasswordPostRequest {
-    changePasswordRequest: ChangePasswordRequest;
-}
-
-export interface AuthLoginPostRequest {
+export interface AuthenticateUserRequest {
     loginRequest: LoginRequest;
 }
 
-export interface AuthRegisterPostRequest {
+export interface AuthenticateWithTelegramRequest {
+    telegramUserDto: TelegramUserDto;
+}
+
+export interface ChangeUserPasswordRequest {
+    changePasswordRequest: ChangePasswordRequest;
+}
+
+export interface RegisterUserRequest {
     registerRequest: RegisterRequest;
 }
 
-export interface AuthTelegramPostRequest {
-    telegramUserDto: TelegramUserDto;
+/**
+ * AuthenticationApi - interface
+ * 
+ * @export
+ * @interface AuthenticationApiInterface
+ */
+export interface AuthenticationApiInterface {
+    /**
+     * 
+     * @summary User login
+     * @param {LoginRequest} loginRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApiInterface
+     */
+    authenticateUserRaw(requestParameters: AuthenticateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>>;
+
+    /**
+     * User login
+     */
+    authenticateUser(requestParameters: AuthenticateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse>;
+
+    /**
+     * 
+     * @summary Telegram authentication
+     * @param {TelegramUserDto} telegramUserDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApiInterface
+     */
+    authenticateWithTelegramRaw(requestParameters: AuthenticateWithTelegramRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>>;
+
+    /**
+     * Telegram authentication
+     */
+    authenticateWithTelegram(requestParameters: AuthenticateWithTelegramRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse>;
+
+    /**
+     * 
+     * @summary Change user password
+     * @param {ChangePasswordRequest} changePasswordRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApiInterface
+     */
+    changeUserPasswordRaw(requestParameters: ChangeUserPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChangePasswordResponse>>;
+
+    /**
+     * Change user password
+     */
+    changeUserPassword(requestParameters: ChangeUserPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChangePasswordResponse>;
+
+    /**
+     * 
+     * @summary User registration
+     * @param {RegisterRequest} registerRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApiInterface
+     */
+    registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * User registration
+     */
+    registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
 }
 
 /**
  * 
  */
-export class AuthenticationApi extends runtime.BaseAPI {
+export class AuthenticationApi extends runtime.BaseAPI implements AuthenticationApiInterface {
+
+    /**
+     * User login
+     */
+    async authenticateUserRaw(requestParameters: AuthenticateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
+        if (requestParameters.loginRequest === null || requestParameters.loginRequest === undefined) {
+            throw new runtime.RequiredError('loginRequest','Required parameter requestParameters.loginRequest was null or undefined when calling authenticateUser.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/auth/login`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LoginRequestToJSON(requestParameters.loginRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * User login
+     */
+    async authenticateUser(requestParameters: AuthenticateUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
+        const response = await this.authenticateUserRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Telegram authentication
+     */
+    async authenticateWithTelegramRaw(requestParameters: AuthenticateWithTelegramRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
+        if (requestParameters.telegramUserDto === null || requestParameters.telegramUserDto === undefined) {
+            throw new runtime.RequiredError('telegramUserDto','Required parameter requestParameters.telegramUserDto was null or undefined when calling authenticateWithTelegram.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/auth/telegram`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TelegramUserDtoToJSON(requestParameters.telegramUserDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Telegram authentication
+     */
+    async authenticateWithTelegram(requestParameters: AuthenticateWithTelegramRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
+        const response = await this.authenticateWithTelegramRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Change user password
      */
-    async authChangePasswordPostRaw(requestParameters: AuthChangePasswordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChangePasswordResponse>> {
+    async changeUserPasswordRaw(requestParameters: ChangeUserPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChangePasswordResponse>> {
         if (requestParameters.changePasswordRequest === null || requestParameters.changePasswordRequest === undefined) {
-            throw new runtime.RequiredError('changePasswordRequest','Required parameter requestParameters.changePasswordRequest was null or undefined when calling authChangePasswordPost.');
+            throw new runtime.RequiredError('changePasswordRequest','Required parameter requestParameters.changePasswordRequest was null or undefined when calling changeUserPassword.');
         }
 
         const queryParameters: any = {};
@@ -97,50 +232,17 @@ export class AuthenticationApi extends runtime.BaseAPI {
     /**
      * Change user password
      */
-    async authChangePasswordPost(requestParameters: AuthChangePasswordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChangePasswordResponse> {
-        const response = await this.authChangePasswordPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * User login
-     */
-    async authLoginPostRaw(requestParameters: AuthLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
-        if (requestParameters.loginRequest === null || requestParameters.loginRequest === undefined) {
-            throw new runtime.RequiredError('loginRequest','Required parameter requestParameters.loginRequest was null or undefined when calling authLoginPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/auth/login`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: LoginRequestToJSON(requestParameters.loginRequest),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * User login
-     */
-    async authLoginPost(requestParameters: AuthLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
-        const response = await this.authLoginPostRaw(requestParameters, initOverrides);
+    async changeUserPassword(requestParameters: ChangeUserPasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChangePasswordResponse> {
+        const response = await this.changeUserPasswordRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * User registration
      */
-    async authRegisterPostRaw(requestParameters: AuthRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.registerRequest === null || requestParameters.registerRequest === undefined) {
-            throw new runtime.RequiredError('registerRequest','Required parameter requestParameters.registerRequest was null or undefined when calling authRegisterPost.');
+            throw new runtime.RequiredError('registerRequest','Required parameter requestParameters.registerRequest was null or undefined when calling registerUser.');
         }
 
         const queryParameters: any = {};
@@ -163,41 +265,8 @@ export class AuthenticationApi extends runtime.BaseAPI {
     /**
      * User registration
      */
-    async authRegisterPost(requestParameters: AuthRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.authRegisterPostRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Telegram authentication
-     */
-    async authTelegramPostRaw(requestParameters: AuthTelegramPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
-        if (requestParameters.telegramUserDto === null || requestParameters.telegramUserDto === undefined) {
-            throw new runtime.RequiredError('telegramUserDto','Required parameter requestParameters.telegramUserDto was null or undefined when calling authTelegramPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/auth/telegram`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TelegramUserDtoToJSON(requestParameters.telegramUserDto),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Telegram authentication
-     */
-    async authTelegramPost(requestParameters: AuthTelegramPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
-        const response = await this.authTelegramPostRaw(requestParameters, initOverrides);
-        return await response.value();
+    async registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.registerUserRaw(requestParameters, initOverrides);
     }
 
 }
