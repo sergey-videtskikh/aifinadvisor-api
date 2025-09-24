@@ -10,11 +10,8 @@ const openApiContent = fs.readFileSync(openApiPath, 'utf8');
 const versionMatch = openApiContent.match(/version:\s*(.+)/);
 const newVersion = versionMatch ? versionMatch[1].trim() : '1.0.0';
 
-// Update main package.json version first
-const mainPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-mainPackageJson.version = newVersion;
-fs.writeFileSync('package.json', JSON.stringify(mainPackageJson, null, 2) + '\n');
-console.log(`✅ Updated main package.json to ${newVersion}`);
+// Skip updating main package.json - let npm version handle it
+console.log(`ℹ️ Skipping main package.json update - npm version will handle it`);
 
 console.log(`🔄 Syncing version to ${newVersion}`);
 
