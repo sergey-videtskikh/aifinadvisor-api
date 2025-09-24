@@ -99,6 +99,10 @@ jobs:
           # Sync versions first to get OpenAPI version
           npm run update:package-versions
 
+          # Commit any changes made by sync-versions.js (frontend/backend packages)
+          git add .
+          git commit -m "chore: sync package versions" || echo "No version sync changes to commit"
+
           # Then bump version
           npm run version:${{ steps.version.outputs.bump }}
 
