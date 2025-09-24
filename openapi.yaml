@@ -20,6 +20,9 @@ paths:
       operationId: authenticateUser
       tags: [Authentication]
       summary: User login
+      description: |
+        Аутентифицирует пользователя по email и паролю.
+        Возвращает JWT токен для доступа к защищенным эндпоинтам.
       security: []
       requestBody:
         required: true
@@ -37,15 +40,18 @@ paths:
         '401':
           description: Invalid credentials
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
 
   /auth/register:
     post:
       operationId: registerUser
       tags: [Authentication]
       summary: User registration
+      description: |
+        Регистрирует нового пользователя в системе.
+        Создает аккаунт с указанными данными и валидирует email.
       security: []
       requestBody:
         required: true
@@ -59,15 +65,18 @@ paths:
         '400':
           description: Validation error
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
 
   /auth/telegram:
     post:
       operationId: authenticateWithTelegram
       tags: [Authentication]
       summary: Telegram authentication
+      description: |
+        Аутентификация пользователя через Telegram Web App.
+        Проверяет подлинность данных от Telegram Bot API и создает JWT сессию.
       security: []
       requestBody:
         required: true
@@ -85,15 +94,18 @@ paths:
         '401':
           description: Telegram authentication error
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
 
   /auth/change-password:
     post:
       operationId: changeUserPassword
       tags: [Authentication]
       summary: Change user password
+      description: |
+        Изменяет пароль аутентифицированного пользователя.
+        Требует подтверждения текущего пароля для безопасности.
       requestBody:
         required: true
         content:
@@ -110,15 +122,15 @@ paths:
         '400':
           description: Validation error
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
         '401':
           description: Unauthorized access
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
 
   # Transaction endpoints
   /transactions:
@@ -178,6 +190,9 @@ paths:
       operationId: createTransaction
       tags: [Transactions]
       summary: Create new transaction
+      description: |
+        Создает новую транзакцию с указанными параметрами.
+        Поддерживает доходы, расходы и переводы между счетами.
       requestBody:
         required: true
         content:
@@ -200,15 +215,53 @@ paths:
         '400':
           description: Validation error
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetails'
 
   /transactions/{id}:
+    get:
+      operationId: getTransactionById
+      tags: [Transactions]
+      summary: Get transaction by ID
+      description: |
+        Получает детали конкретной транзакции по её идентификатору.
+        Возвращает ETag для поддержки оптимистичной блокировки.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "Уникальный идентификатор транзакции"
+      responses:
+        '200':
+          description: Transaction details
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: "Entity version for optimistic locking"
+              example: '"abc123def456"'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
+        '404':
+          description: Transaction not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
     put:
       operationId: updateTransaction
       tags: [Transactions]
       summary: Update transaction
+      description: |
+        Полное обновление существующей транзакции.
+        Заменяет все поля транзакции новыми значениями.
       parameters:
         - name: id
           in: path
@@ -242,12 +295,100 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
 
+    patch:
+      operationId: patchTransaction
+      tags: [Transactions]
+      summary: Partially update transaction
+      description: |
+        Частичное обновление транзакции с поддержкой оптимистичной блокировки.
+        Обновляет только переданные поля, остальные остаются без изменений.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "Уникальный идентификатор транзакции"
+        - name: If-Match
+          in: header
+          description: "ETag для оптимистичной блокировки"
+          required: true
+          schema:
+            type: string
+          example: '"abc123def456"'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchTransactionRequest'
+      responses:
+        '200':
+          description: Transaction partially updated
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: "New entity version"
+              example: '"def456ghi789"'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDto'
+        '400':
+          description: Invalid request data
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Transaction not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '412':
+          description: Precondition Failed - ETag mismatch
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+    delete:
+      operationId: deleteTransaction
+      tags: [Transactions]
+      summary: Delete transaction
+      description: |
+        Удаляет транзакцию из системы.
+        Операция необратима и влияет на все связанные отчеты и аналитику.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "Уникальный идентификатор транзакции"
+      responses:
+        '204':
+          description: Transaction deleted successfully
+        '404':
+          description: Transaction not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
   # Category endpoints
   /categories:
     get:
       operationId: getCategories
       tags: [Categories]
       summary: Get categories list
+      description: |
+        Получает список всех категорий пользователя.
+        Возвращает иерархическую структуру с подкатегориями.
       responses:
         '200':
           description: Categories list
@@ -257,10 +398,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CategoryDto'
+        '401':
+          description: Unauthorized access
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
     post:
       operationId: createCategory
       tags: [Categories]
       summary: Create new category
+      description: |
+        Создает новую категорию для классификации транзакций.
+        Поддерживает создание подкатегорий и настройку иконок.
       requestBody:
         required: true
         content:
@@ -446,6 +596,12 @@ components:
           pattern: '^\d+\.\d{2}$'
           description: "Сумма транзакции в формате decimal string (копейки)"
           example: "250.50"
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Код валюты ISO-4217"
+          example: "RUB"
+          default: "RUB"
         date:
           type: string
           format: date
@@ -481,6 +637,12 @@ components:
           pattern: '^\d+\.\d{2}$'
           description: "Сумма транзакции в формате decimal string (копейки)"
           example: "250.50"
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Код валюты ISO-4217"
+          example: "RUB"
+          default: "RUB"
         date:
           type: string
           format: date
@@ -518,6 +680,11 @@ components:
           pattern: '^\d+\.\d{2}$'
           description: "Сумма транзакции в формате decimal string (копейки)"
           example: "260.00"
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Код валюты ISO-4217"
+          example: "RUB"
         date:
           type: string
           format: date
@@ -541,6 +708,45 @@ components:
         excluded:
           type: boolean
           description: "Исключить из расчетов"
+
+    PatchTransactionRequest:
+      type: object
+      description: "Частичное обновление транзакции - все поля опциональны"
+      properties:
+        amount:
+          type: string
+          pattern: '^\d+\.\d{2}$'
+          description: "Новая сумма транзакции"
+          example: "300.00"
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Новый код валюты ISO-4217"
+          example: "USD"
+        date:
+          type: string
+          format: date
+          description: "Новая дата транзакции"
+          example: "2025-09-17"
+        categoryId:
+          type: string
+          format: uuid
+          description: "Новая категория"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Новое название транзакции"
+          example: "Обновленное название"
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        accountId:
+          type: string
+          format: uuid
+          description: "Новый ID счета"
+        excluded:
+          type: boolean
+          description: "Новое значение флага исключения"
 
     TransactionType:
       type: string
@@ -716,16 +922,7 @@ components:
                 description: "Код ошибки"
                 example: "POSITIVE_NUMBER_REQUIRED"
 
-    ErrorResponse:
-      type: object
-      deprecated: true
-      properties:
-        message:
-          type: string
-          description: "Сообщение об ошибке"
-        code:
-          type: string
-          description: "Код ошибки"
+
 
   securitySchemes:
     BearerAuth:

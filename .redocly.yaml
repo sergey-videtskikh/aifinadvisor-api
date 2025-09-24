@@ -21,8 +21,8 @@ rules:
   info-license: off
   tag-description: warn
 
-  # Правила безопасности
-  operation-security-defined: warn
+  # Правила безопасности (убрано - invalid rule)
+  # operation-security-defined: warn
 
   # Правила данных
   boolean-parameter-prefixes: warn
@@ -52,4 +52,4 @@ theme:
       languages:
         - lang: curl
         - lang: JavaScript
-        - lang: TypeScript
+        - lang: Node.js
