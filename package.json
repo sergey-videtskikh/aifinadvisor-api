@@ -1,6 +1,6 @@
 {
   "name": "aifinadvisor-api-libs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "API libraries generator and publisher for FinApp",
   "private": true,
   "workspaces": [
