@@ -81,7 +81,18 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+
+          # Add any generated files to git before versioning
+          git add .
+          git commit -m "chore: update generated code" || echo "No changes to commit"
+
+          # Bump version
           npm run version:${{ steps.version.outputs.bump }}
+
+          # Get the new version and set as environment variable
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo "📦 New version: ${NEW_VERSION}"
 
       - name: Publish Frontend Package to GitHub Packages
         if: steps.version.outputs.bump != 'none'
