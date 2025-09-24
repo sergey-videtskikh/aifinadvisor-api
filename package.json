@@ -1,6 +1,6 @@
 {
   "name": "aifinadvisor-api-libs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API libraries generator and publisher for FinApp",
   "private": true,
   "workspaces": [
@@ -42,7 +42,13 @@
     "type": "git",
     "url": "https://github.com/sergey-vsv/aifinadvisor-api.git"
   },
-  "keywords": ["openapi", "swagger", "api", "codegen", "library"],
+  "keywords": [
+    "openapi",
+    "swagger",
+    "api",
+    "codegen",
+    "library"
+  ],
   "author": "sergey-vsv",
   "license": "MIT",
   "engines": {
