@@ -204,7 +204,4 @@ config/secrets.yml
 /generated/
 
 # Package build outputs (commit source but not build artifacts)
-packages/*/dist/
-packages/*/target/
-packages/*/build/
-packages/*/src/
+
