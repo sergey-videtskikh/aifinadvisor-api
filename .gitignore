@@ -205,3 +205,4 @@ config/secrets.yml
 
 # Package build outputs (commit source but not build artifacts)
 
+/.mcp.json
