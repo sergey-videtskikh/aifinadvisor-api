@@ -58,6 +58,9 @@ export interface GetTransactionsRequest {
     sort?: string;
     categoryId?: string;
     type?: TransactionType;
+    startDate?: Date;
+    endDate?: Date;
+    excluded?: boolean;
 }
 
 export interface PatchTransactionOperationRequest {
@@ -134,6 +137,9 @@ export interface TransactionsApiInterface {
      * @param {string} [sort] Критерии сортировки в формате \&#39;field,direction\&#39;
      * @param {string} [categoryId] Фильтр по ID категории
      * @param {TransactionType} [type] Фильтр по типу транзакции
+     * @param {Date} [startDate] Начальная дата периода в формате YYYY-MM-DD
+     * @param {Date} [endDate] Конечная дата периода в формате YYYY-MM-DD
+     * @param {boolean} [excluded] Включать исключенные транзакции
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApiInterface
@@ -335,6 +341,18 @@ export class TransactionsApi extends runtime.BaseAPI implements TransactionsApiI
 
         if (requestParameters.type !== undefined) {
             queryParameters['type'] = requestParameters.type;
+        }
+
+        if (requestParameters.startDate !== undefined) {
+            queryParameters['startDate'] = (requestParameters.startDate as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters.endDate !== undefined) {
+            queryParameters['endDate'] = (requestParameters.endDate as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters.excluded !== undefined) {
+            queryParameters['excluded'] = requestParameters.excluded;
         }
 
         const headerParameters: runtime.HTTPHeaders = {};

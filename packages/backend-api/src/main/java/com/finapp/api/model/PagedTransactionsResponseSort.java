@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("PagedTransactionsResponse_sort")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T14:36:51.813686573Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T19:20:01.059020+03:00[Europe/Moscow]")
 public class PagedTransactionsResponseSort {
 
   private Boolean empty;

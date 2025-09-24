@@ -374,6 +374,27 @@ paths:
           description: "Фильтр по типу транзакции"
           schema:
             $ref: '#/components/schemas/TransactionType'
+        - name: startDate
+          in: query
+          description: "Начальная дата периода в формате YYYY-MM-DD"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: "Конечная дата периода в формате YYYY-MM-DD"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: excluded
+          in: query
+          description: "Включать исключенные транзакции"
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: Transactions list

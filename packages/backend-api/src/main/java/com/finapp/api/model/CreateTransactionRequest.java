@@ -111,7 +111,7 @@ public class CreateTransactionRequest {
    * @return date
   */
   @Valid 
-  @Schema(name = "date", example = "Mon Sep 15 00:00:00 UTC 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "date", example = "Mon Sep 15 03:00:00 MSK 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("date")
   public LocalDate getDate() {
     return date;

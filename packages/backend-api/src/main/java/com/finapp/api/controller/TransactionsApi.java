@@ -6,9 +6,11 @@
 package com.finapp.api.controller;
 
 import com.finapp.api.model.CreateTransactionRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import com.finapp.api.model.ImportBatchSummary;
 import com.finapp.api.model.ImportHistoryResponse;
 import com.finapp.api.model.ImportTransactionResponse;
+import java.time.LocalDate;
 import com.finapp.api.model.PagedTransactionsResponse;
 import com.finapp.api.model.PatchTransactionRequest;
 import com.finapp.api.model.ProblemDetails;
@@ -42,7 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T14:36:51.813686573Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T19:20:01.059020+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Transactions", description = "the Transactions API")
 public interface TransactionsApi {
@@ -287,6 +289,9 @@ public interface TransactionsApi {
      * @param sort Критерии сортировки в формате &#39;field,direction&#39; (optional, default to date,desc)
      * @param categoryId Фильтр по ID категории (optional)
      * @param type Фильтр по типу транзакции (optional)
+     * @param startDate Начальная дата периода в формате YYYY-MM-DD (optional)
+     * @param endDate Конечная дата периода в формате YYYY-MM-DD (optional)
+     * @param excluded Включать исключенные транзакции (optional, default to false)
      * @return Transactions list (status code 200)
      *         or Invalid pagination parameters (status code 400)
      */
@@ -320,7 +325,10 @@ public interface TransactionsApi {
         @Min(1) @Max(100) @Parameter(name = "size", description = "Размер страницы", in = ParameterIn.QUERY) @Valid @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
         @Parameter(name = "sort", description = "Критерии сортировки в формате 'field,direction'", in = ParameterIn.QUERY) @Valid @RequestParam(value = "sort", required = false, defaultValue = "date,desc") String sort,
         @Parameter(name = "categoryId", description = "Фильтр по ID категории", in = ParameterIn.QUERY) @Valid @RequestParam(value = "categoryId", required = false) UUID categoryId,
-        @Parameter(name = "type", description = "Фильтр по типу транзакции", in = ParameterIn.QUERY) @Valid @RequestParam(value = "type", required = false) TransactionType type
+        @Parameter(name = "type", description = "Фильтр по типу транзакции", in = ParameterIn.QUERY) @Valid @RequestParam(value = "type", required = false) TransactionType type,
+        @Parameter(name = "startDate", description = "Начальная дата периода в формате YYYY-MM-DD", in = ParameterIn.QUERY) @Valid @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @Parameter(name = "endDate", description = "Конечная дата периода в формате YYYY-MM-DD", in = ParameterIn.QUERY) @Valid @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+        @Parameter(name = "excluded", description = "Включать исключенные транзакции", in = ParameterIn.QUERY) @Valid @RequestParam(value = "excluded", required = false, defaultValue = "false") Boolean excluded
     );
 
 

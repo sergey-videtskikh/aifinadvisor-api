@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * TransactionDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T14:36:51.813686573Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T19:20:01.059020+03:00[Europe/Moscow]")
 public class TransactionDto {
 
   private UUID id;
@@ -118,7 +118,7 @@ public class TransactionDto {
    * @return date
   */
   @Valid 
-  @Schema(name = "date", example = "Mon Sep 15 00:00:00 UTC 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "date", example = "Mon Sep 15 03:00:00 MSK 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("date")
   public LocalDate getDate() {
     return date;
