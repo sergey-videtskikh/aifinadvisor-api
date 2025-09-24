@@ -1,11 +1,11 @@
 {
   "name": "@sergey-videtskikh/finapp-api-client",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "OpenAPI client for @sergey-videtskikh/finapp-api-client",
   "author": "OpenAPI-Generator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
+    "url": "https://github.com/sergey-videtskikh/aifinadvisor-api.git"
   },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
@@ -17,5 +17,8 @@
   },
   "devDependencies": {
     "typescript": "^4.0"
+  },
+  "publishConfig": {
+    "@sergey-videtskikh:registry": "https://npm.pkg.github.com"
   }
 }
