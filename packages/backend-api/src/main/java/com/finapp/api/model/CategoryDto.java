@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * CategoryDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 public class CategoryDto {
 
   private UUID id;

@@ -34,13 +34,14 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 @Validated
 @Tag(name = "Categories", description = "the Categories API")
 public interface CategoriesApi {
 
     /**
      * POST /categories : Create new category
+     * Создает новую категорию для классификации транзакций. Поддерживает создание подкатегорий и настройку иконок. 
      *
      * @param createCategoryRequest  (required)
      * @return Category created (status code 201)
@@ -50,6 +51,7 @@ public interface CategoriesApi {
     @Operation(
         operationId = "createCategory",
         summary = "Create new category",
+        description = "Создает новую категорию для классификации транзакций. Поддерживает создание подкатегорий и настройку иконок. ",
         tags = { "Categories" },
         responses = {
             @ApiResponse(responseCode = "201", description = "Category created", content = {
@@ -83,16 +85,24 @@ public interface CategoriesApi {
 
     /**
      * GET /categories : Get categories list
+     * Получает список всех категорий пользователя. Возвращает иерархическую структуру с подкатегориями. 
      *
      * @return Categories list (status code 200)
+     *         or Unauthorized access (status code 401)
      */
     @Operation(
         operationId = "getCategories",
         summary = "Get categories list",
+        description = "Получает список всех категорий пользователя. Возвращает иерархическую структуру с подкатегориями. ",
         tags = { "Categories" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Categories list", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryDto.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryDto.class))),
+                @Content(mediaType = "application/problem+json", array = @ArraySchema(schema = @Schema(implementation = CategoryDto.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         },
         security = {
@@ -102,7 +112,7 @@ public interface CategoriesApi {
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/categories",
-        produces = { "application/json" }
+        produces = { "application/json", "application/problem+json" }
     )
     
     ResponseEntity<List<CategoryDto>> getCategories(

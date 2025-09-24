@@ -13,12 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { InputType } from './InputType';
-import {
-    InputTypeFromJSON,
-    InputTypeFromJSONTyped,
-    InputTypeToJSON,
-} from './InputType';
 import type { TransactionType } from './TransactionType';
 import {
     TransactionTypeFromJSON,
@@ -27,106 +21,92 @@ import {
 } from './TransactionType';
 
 /**
- * 
+ * Частичное обновление транзакции - все поля опциональны
  * @export
- * @interface TransactionDto
+ * @interface PatchTransactionRequest
  */
-export interface TransactionDto {
+export interface PatchTransactionRequest {
     /**
-     * ID транзакции
+     * Новая сумма транзакции
      * @type {string}
-     * @memberof TransactionDto
-     */
-    id?: string;
-    /**
-     * Сумма транзакции в формате decimal string (копейки)
-     * @type {string}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     amount?: string;
     /**
-     * Код валюты ISO-4217
+     * Новый код валюты ISO-4217
      * @type {string}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     currency?: string;
     /**
-     * Дата транзакции
+     * Новая дата транзакции
      * @type {Date}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     date?: Date;
     /**
-     * ID категории
+     * Новая категория
      * @type {string}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     categoryId?: string;
     /**
-     * Название транзакции
+     * Новое название транзакции
      * @type {string}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     name?: string;
     /**
      * 
      * @type {TransactionType}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     type?: TransactionType;
     /**
-     * 
-     * @type {InputType}
-     * @memberof TransactionDto
-     */
-    inputType?: InputType;
-    /**
-     * ID счета
+     * Новый ID счета
      * @type {string}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     accountId?: string;
     /**
-     * Исключить из расчетов
+     * Новое значение флага исключения
      * @type {boolean}
-     * @memberof TransactionDto
+     * @memberof PatchTransactionRequest
      */
     excluded?: boolean;
 }
 
 /**
- * Check if a given object implements the TransactionDto interface.
+ * Check if a given object implements the PatchTransactionRequest interface.
  */
-export function instanceOfTransactionDto(value: object): boolean {
+export function instanceOfPatchTransactionRequest(value: object): boolean {
     let isInstance = true;
 
     return isInstance;
 }
 
-export function TransactionDtoFromJSON(json: any): TransactionDto {
-    return TransactionDtoFromJSONTyped(json, false);
+export function PatchTransactionRequestFromJSON(json: any): PatchTransactionRequest {
+    return PatchTransactionRequestFromJSONTyped(json, false);
 }
 
-export function TransactionDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransactionDto {
+export function PatchTransactionRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): PatchTransactionRequest {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'id': !exists(json, 'id') ? undefined : json['id'],
         'amount': !exists(json, 'amount') ? undefined : json['amount'],
         'currency': !exists(json, 'currency') ? undefined : json['currency'],
         'date': !exists(json, 'date') ? undefined : (new Date(json['date'])),
         'categoryId': !exists(json, 'categoryId') ? undefined : json['categoryId'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'type': !exists(json, 'type') ? undefined : TransactionTypeFromJSON(json['type']),
-        'inputType': !exists(json, 'inputType') ? undefined : InputTypeFromJSON(json['inputType']),
         'accountId': !exists(json, 'accountId') ? undefined : json['accountId'],
         'excluded': !exists(json, 'excluded') ? undefined : json['excluded'],
     };
 }
 
-export function TransactionDtoToJSON(value?: TransactionDto | null): any {
+export function PatchTransactionRequestToJSON(value?: PatchTransactionRequest | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -135,14 +115,12 @@ export function TransactionDtoToJSON(value?: TransactionDto | null): any {
     }
     return {
         
-        'id': value.id,
         'amount': value.amount,
         'currency': value.currency,
         'date': value.date === undefined ? undefined : (value.date.toISOString().substring(0,10)),
         'categoryId': value.categoryId,
         'name': value.name,
         'type': TransactionTypeToJSON(value.type),
-        'inputType': InputTypeToJSON(value.inputType),
         'accountId': value.accountId,
         'excluded': value.excluded,
     };

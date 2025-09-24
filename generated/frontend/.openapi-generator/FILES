@@ -13,12 +13,12 @@ src/models/ChangePasswordRequest.ts
 src/models/ChangePasswordResponse.ts
 src/models/CreateCategoryRequest.ts
 src/models/CreateTransactionRequest.ts
-src/models/ErrorResponse.ts
 src/models/InputType.ts
 src/models/JwtResponse.ts
 src/models/LoginRequest.ts
 src/models/PagedTransactionsResponse.ts
 src/models/PagedTransactionsResponseSort.ts
+src/models/PatchTransactionRequest.ts
 src/models/ProblemDetails.ts
 src/models/ProblemDetailsErrorsInner.ts
 src/models/RegisterRequest.ts

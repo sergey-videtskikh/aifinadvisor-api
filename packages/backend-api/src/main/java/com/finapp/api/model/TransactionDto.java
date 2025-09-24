@@ -24,12 +24,14 @@ import jakarta.annotation.Generated;
  * TransactionDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 public class TransactionDto {
 
   private UUID id;
 
   private String amount;
+
+  private String currency = "RUB";
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate date;
@@ -84,6 +86,26 @@ public class TransactionDto {
 
   public void setAmount(String amount) {
     this.amount = amount;
+  }
+
+  public TransactionDto currency(String currency) {
+    this.currency = currency;
+    return this;
+  }
+
+  /**
+   * Код валюты ISO-4217
+   * @return currency
+  */
+  @Pattern(regexp = "^[A-Z]{3}$") 
+  @Schema(name = "currency", example = "RUB", description = "Код валюты ISO-4217", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("currency")
+  public String getCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(String currency) {
+    this.currency = currency;
   }
 
   public TransactionDto date(LocalDate date) {
@@ -237,6 +259,7 @@ public class TransactionDto {
     TransactionDto transactionDto = (TransactionDto) o;
     return Objects.equals(this.id, transactionDto.id) &&
         Objects.equals(this.amount, transactionDto.amount) &&
+        Objects.equals(this.currency, transactionDto.currency) &&
         Objects.equals(this.date, transactionDto.date) &&
         Objects.equals(this.categoryId, transactionDto.categoryId) &&
         Objects.equals(this.name, transactionDto.name) &&
@@ -248,7 +271,7 @@ public class TransactionDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, amount, date, categoryId, name, type, inputType, accountId, excluded);
+    return Objects.hash(id, amount, currency, date, categoryId, name, type, inputType, accountId, excluded);
   }
 
   @Override
@@ -257,6 +280,7 @@ public class TransactionDto {
     sb.append("class TransactionDto {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
+    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");

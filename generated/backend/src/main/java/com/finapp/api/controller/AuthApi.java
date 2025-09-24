@@ -7,9 +7,9 @@ package com.finapp.api.controller;
 
 import com.finapp.api.model.ChangePasswordRequest;
 import com.finapp.api.model.ChangePasswordResponse;
-import com.finapp.api.model.ErrorResponse;
 import com.finapp.api.model.JwtResponse;
 import com.finapp.api.model.LoginRequest;
+import com.finapp.api.model.ProblemDetails;
 import com.finapp.api.model.RegisterRequest;
 import com.finapp.api.model.TelegramUserDto;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -38,13 +38,14 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 @Validated
 @Tag(name = "Authentication", description = "the Authentication API")
 public interface AuthApi {
 
     /**
      * POST /auth/login : User login
+     * Аутентифицирует пользователя по email и паролю. Возвращает JWT токен для доступа к защищенным эндпоинтам. 
      *
      * @param loginRequest  (required)
      * @return Successful authentication (status code 200)
@@ -53,20 +54,23 @@ public interface AuthApi {
     @Operation(
         operationId = "authenticateUser",
         summary = "User login",
+        description = "Аутентифицирует пользователя по email и паролю. Возвращает JWT токен для доступа к защищенным эндпоинтам. ",
         tags = { "Authentication" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = JwtResponse.class))
             }),
             @ApiResponse(responseCode = "401", description = "Invalid credentials", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/auth/login",
-        produces = { "application/json" },
+        produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" }
     )
     
@@ -77,6 +81,7 @@ public interface AuthApi {
 
     /**
      * POST /auth/telegram : Telegram authentication
+     * Аутентификация пользователя через Telegram Web App. Проверяет подлинность данных от Telegram Bot API и создает JWT сессию. 
      *
      * @param telegramUserDto  (required)
      * @return Successful authentication (status code 200)
@@ -85,20 +90,23 @@ public interface AuthApi {
     @Operation(
         operationId = "authenticateWithTelegram",
         summary = "Telegram authentication",
+        description = "Аутентификация пользователя через Telegram Web App. Проверяет подлинность данных от Telegram Bot API и создает JWT сессию. ",
         tags = { "Authentication" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Successful authentication", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = JwtResponse.class))
             }),
             @ApiResponse(responseCode = "401", description = "Telegram authentication error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/auth/telegram",
-        produces = { "application/json" },
+        produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" }
     )
     
@@ -109,6 +117,7 @@ public interface AuthApi {
 
     /**
      * POST /auth/change-password : Change user password
+     * Изменяет пароль аутентифицированного пользователя. Требует подтверждения текущего пароля для безопасности. 
      *
      * @param changePasswordRequest  (required)
      * @return Password successfully changed (status code 200)
@@ -118,16 +127,20 @@ public interface AuthApi {
     @Operation(
         operationId = "changeUserPassword",
         summary = "Change user password",
+        description = "Изменяет пароль аутентифицированного пользователя. Требует подтверждения текущего пароля для безопасности. ",
         tags = { "Authentication" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Password successfully changed", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ChangePasswordResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ChangePasswordResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ChangePasswordResponse.class))
             }),
             @ApiResponse(responseCode = "400", description = "Validation error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             }),
             @ApiResponse(responseCode = "401", description = "Unauthorized access", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         },
         security = {
@@ -137,7 +150,7 @@ public interface AuthApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/auth/change-password",
-        produces = { "application/json" },
+        produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" }
     )
     
@@ -148,6 +161,7 @@ public interface AuthApi {
 
     /**
      * POST /auth/register : User registration
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
      *
      * @param registerRequest  (required)
      * @return User successfully registered (status code 201)
@@ -156,18 +170,19 @@ public interface AuthApi {
     @Operation(
         operationId = "registerUser",
         summary = "User registration",
+        description = "Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. ",
         tags = { "Authentication" },
         responses = {
             @ApiResponse(responseCode = "201", description = "User successfully registered"),
             @ApiResponse(responseCode = "400", description = "Validation error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/auth/register",
-        produces = { "application/json" },
+        produces = { "application/problem+json" },
         consumes = { "application/json" }
     )
     

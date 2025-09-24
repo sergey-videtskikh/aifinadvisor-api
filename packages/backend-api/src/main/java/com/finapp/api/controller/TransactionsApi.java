@@ -6,8 +6,8 @@
 package com.finapp.api.controller;
 
 import com.finapp.api.model.CreateTransactionRequest;
-import com.finapp.api.model.ErrorResponse;
 import com.finapp.api.model.PagedTransactionsResponse;
+import com.finapp.api.model.PatchTransactionRequest;
 import com.finapp.api.model.ProblemDetails;
 import com.finapp.api.model.TransactionDto;
 import com.finapp.api.model.TransactionType;
@@ -39,13 +39,14 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 @Validated
 @Tag(name = "Transactions", description = "the Transactions API")
 public interface TransactionsApi {
 
     /**
      * POST /transactions : Create new transaction
+     * Создает новую транзакцию с указанными параметрами. Поддерживает доходы, расходы и переводы между счетами. 
      *
      * @param createTransactionRequest  (required)
      * @return Transaction created (status code 201)
@@ -54,13 +55,16 @@ public interface TransactionsApi {
     @Operation(
         operationId = "createTransaction",
         summary = "Create new transaction",
+        description = "Создает новую транзакцию с указанными параметрами. Поддерживает доходы, расходы и переводы между счетами. ",
         tags = { "Transactions" },
         responses = {
             @ApiResponse(responseCode = "201", description = "Transaction created", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = TransactionDto.class))
             }),
             @ApiResponse(responseCode = "400", description = "Validation error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         },
         security = {
@@ -70,12 +74,84 @@ public interface TransactionsApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/transactions",
-        produces = { "application/json" },
+        produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" }
     )
     
     ResponseEntity<TransactionDto> createTransaction(
         @Parameter(name = "CreateTransactionRequest", description = "", required = true) @Valid @RequestBody CreateTransactionRequest createTransactionRequest
+    );
+
+
+    /**
+     * DELETE /transactions/{id} : Delete transaction
+     * Удаляет транзакцию из системы. Операция необратима и влияет на все связанные отчеты и аналитику. 
+     *
+     * @param id Уникальный идентификатор транзакции (required)
+     * @return Transaction deleted successfully (status code 204)
+     *         or Transaction not found (status code 404)
+     */
+    @Operation(
+        operationId = "deleteTransaction",
+        summary = "Delete transaction",
+        description = "Удаляет транзакцию из системы. Операция необратима и влияет на все связанные отчеты и аналитику. ",
+        tags = { "Transactions" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Transaction deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Transaction not found", content = {
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.DELETE,
+        value = "/transactions/{id}",
+        produces = { "application/problem+json" }
+    )
+    
+    ResponseEntity<Void> deleteTransaction(
+        @Parameter(name = "id", description = "Уникальный идентификатор транзакции", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+    );
+
+
+    /**
+     * GET /transactions/{id} : Get transaction by ID
+     * Получает детали конкретной транзакции по её идентификатору. Возвращает ETag для поддержки оптимистичной блокировки. 
+     *
+     * @param id Уникальный идентификатор транзакции (required)
+     * @return Transaction details (status code 200)
+     *         or Transaction not found (status code 404)
+     */
+    @Operation(
+        operationId = "getTransactionById",
+        summary = "Get transaction by ID",
+        description = "Получает детали конкретной транзакции по её идентификатору. Возвращает ETag для поддержки оптимистичной блокировки. ",
+        tags = { "Transactions" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Transaction details", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = TransactionDto.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Transaction not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/transactions/{id}",
+        produces = { "application/json", "application/problem+json" }
+    )
+    
+    ResponseEntity<TransactionDto> getTransactionById(
+        @Parameter(name = "id", description = "Уникальный идентификатор транзакции", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     );
 
 
@@ -126,7 +202,61 @@ public interface TransactionsApi {
 
 
     /**
+     * PATCH /transactions/{id} : Partially update transaction
+     * Частичное обновление транзакции с поддержкой оптимистичной блокировки. Обновляет только переданные поля, остальные остаются без изменений. 
+     *
+     * @param id Уникальный идентификатор транзакции (required)
+     * @param ifMatch ETag для оптимистичной блокировки (required)
+     * @param patchTransactionRequest  (required)
+     * @return Transaction partially updated (status code 200)
+     *         or Invalid request data (status code 400)
+     *         or Transaction not found (status code 404)
+     *         or Precondition Failed - ETag mismatch (status code 412)
+     */
+    @Operation(
+        operationId = "patchTransaction",
+        summary = "Partially update transaction",
+        description = "Частичное обновление транзакции с поддержкой оптимистичной блокировки. Обновляет только переданные поля, остальные остаются без изменений. ",
+        tags = { "Transactions" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Transaction partially updated", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = TransactionDto.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Transaction not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "412", description = "Precondition Failed - ETag mismatch", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PATCH,
+        value = "/transactions/{id}",
+        produces = { "application/json", "application/problem+json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<TransactionDto> patchTransaction(
+        @Parameter(name = "id", description = "Уникальный идентификатор транзакции", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
+        @NotNull @Parameter(name = "If-Match", description = "ETag для оптимистичной блокировки", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "If-Match", required = true) String ifMatch,
+        @Parameter(name = "PatchTransactionRequest", description = "", required = true) @Valid @RequestBody PatchTransactionRequest patchTransactionRequest
+    );
+
+
+    /**
      * PUT /transactions/{id} : Update transaction
+     * Полное обновление существующей транзакции. Заменяет все поля транзакции новыми значениями. 
      *
      * @param id  (required)
      * @param updateTransactionRequest  (required)
@@ -137,6 +267,7 @@ public interface TransactionsApi {
     @Operation(
         operationId = "updateTransaction",
         summary = "Update transaction",
+        description = "Полное обновление существующей транзакции. Заменяет все поля транзакции новыми значениями. ",
         tags = { "Transactions" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Transaction updated", content = {

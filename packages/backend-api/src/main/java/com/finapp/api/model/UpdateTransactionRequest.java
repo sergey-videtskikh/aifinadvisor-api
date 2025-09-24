@@ -23,10 +23,12 @@ import jakarta.annotation.Generated;
  * UpdateTransactionRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
 public class UpdateTransactionRequest {
 
   private String amount;
+
+  private String currency;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate date;
@@ -59,6 +61,26 @@ public class UpdateTransactionRequest {
 
   public void setAmount(String amount) {
     this.amount = amount;
+  }
+
+  public UpdateTransactionRequest currency(String currency) {
+    this.currency = currency;
+    return this;
+  }
+
+  /**
+   * Код валюты ISO-4217
+   * @return currency
+  */
+  @Pattern(regexp = "^[A-Z]{3}$") 
+  @Schema(name = "currency", example = "RUB", description = "Код валюты ISO-4217", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("currency")
+  public String getCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(String currency) {
+    this.currency = currency;
   }
 
   public UpdateTransactionRequest date(LocalDate date) {
@@ -191,6 +213,7 @@ public class UpdateTransactionRequest {
     }
     UpdateTransactionRequest updateTransactionRequest = (UpdateTransactionRequest) o;
     return Objects.equals(this.amount, updateTransactionRequest.amount) &&
+        Objects.equals(this.currency, updateTransactionRequest.currency) &&
         Objects.equals(this.date, updateTransactionRequest.date) &&
         Objects.equals(this.categoryId, updateTransactionRequest.categoryId) &&
         Objects.equals(this.name, updateTransactionRequest.name) &&
@@ -201,7 +224,7 @@ public class UpdateTransactionRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, date, categoryId, name, type, accountId, excluded);
+    return Objects.hash(amount, currency, date, categoryId, name, type, accountId, excluded);
   }
 
   @Override
@@ -209,6 +232,7 @@ public class UpdateTransactionRequest {
     StringBuilder sb = new StringBuilder();
     sb.append("class UpdateTransactionRequest {\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
+    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");

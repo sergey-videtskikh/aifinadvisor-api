@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.finapp.api.model.InputType;
 import com.finapp.api.model.TransactionType;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -21,15 +20,16 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * CreateTransactionRequest
+ * Частичное обновление транзакции - все поля опциональны
  */
 
+@Schema(name = "PatchTransactionRequest", description = "Частичное обновление транзакции - все поля опциональны")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
-public class CreateTransactionRequest {
+public class PatchTransactionRequest {
 
   private String amount;
 
-  private String currency = "RUB";
+  private String currency;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate date;
@@ -40,38 +40,21 @@ public class CreateTransactionRequest {
 
   private TransactionType type;
 
-  private InputType inputType;
-
   private UUID accountId;
 
-  private Boolean excluded = false;
+  private Boolean excluded;
 
-  public CreateTransactionRequest() {
-    super();
-  }
-
-  /**
-   * Constructor with only required parameters
-   */
-  public CreateTransactionRequest(String amount, UUID categoryId, String name, TransactionType type, UUID accountId) {
-    this.amount = amount;
-    this.categoryId = categoryId;
-    this.name = name;
-    this.type = type;
-    this.accountId = accountId;
-  }
-
-  public CreateTransactionRequest amount(String amount) {
+  public PatchTransactionRequest amount(String amount) {
     this.amount = amount;
     return this;
   }
 
   /**
-   * Сумма транзакции в формате decimal string (копейки)
+   * Новая сумма транзакции
    * @return amount
   */
-  @NotNull @Pattern(regexp = "^\\d+\\.\\d{2}$") 
-  @Schema(name = "amount", example = "250.50", description = "Сумма транзакции в формате decimal string (копейки)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Pattern(regexp = "^\\d+\\.\\d{2}$") 
+  @Schema(name = "amount", example = "300.00", description = "Новая сумма транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("amount")
   public String getAmount() {
     return amount;
@@ -81,17 +64,17 @@ public class CreateTransactionRequest {
     this.amount = amount;
   }
 
-  public CreateTransactionRequest currency(String currency) {
+  public PatchTransactionRequest currency(String currency) {
     this.currency = currency;
     return this;
   }
 
   /**
-   * Код валюты ISO-4217
+   * Новый код валюты ISO-4217
    * @return currency
   */
   @Pattern(regexp = "^[A-Z]{3}$") 
-  @Schema(name = "currency", example = "RUB", description = "Код валюты ISO-4217", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "currency", example = "USD", description = "Новый код валюты ISO-4217", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("currency")
   public String getCurrency() {
     return currency;
@@ -101,17 +84,17 @@ public class CreateTransactionRequest {
     this.currency = currency;
   }
 
-  public CreateTransactionRequest date(LocalDate date) {
+  public PatchTransactionRequest date(LocalDate date) {
     this.date = date;
     return this;
   }
 
   /**
-   * Дата транзакции
+   * Новая дата транзакции
    * @return date
   */
   @Valid 
-  @Schema(name = "date", example = "Mon Sep 15 00:00:00 UTC 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "date", example = "Wed Sep 17 00:00:00 UTC 2025", description = "Новая дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("date")
   public LocalDate getDate() {
     return date;
@@ -121,17 +104,17 @@ public class CreateTransactionRequest {
     this.date = date;
   }
 
-  public CreateTransactionRequest categoryId(UUID categoryId) {
+  public PatchTransactionRequest categoryId(UUID categoryId) {
     this.categoryId = categoryId;
     return this;
   }
 
   /**
-   * ID категории
+   * Новая категория
    * @return categoryId
   */
-  @NotNull @Valid 
-  @Schema(name = "categoryId", description = "ID категории", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "categoryId", description = "Новая категория", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("categoryId")
   public UUID getCategoryId() {
     return categoryId;
@@ -141,17 +124,17 @@ public class CreateTransactionRequest {
     this.categoryId = categoryId;
   }
 
-  public CreateTransactionRequest name(String name) {
+  public PatchTransactionRequest name(String name) {
     this.name = name;
     return this;
   }
 
   /**
-   * Название транзакции
+   * Новое название транзакции
    * @return name
   */
-  @NotNull @Size(min = 1, max = 100) 
-  @Schema(name = "name", example = "Обед в кафе", description = "Название транзакции", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Size(min = 1, max = 100) 
+  @Schema(name = "name", example = "Обновленное название", description = "Новое название транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("name")
   public String getName() {
     return name;
@@ -161,7 +144,7 @@ public class CreateTransactionRequest {
     this.name = name;
   }
 
-  public CreateTransactionRequest type(TransactionType type) {
+  public PatchTransactionRequest type(TransactionType type) {
     this.type = type;
     return this;
   }
@@ -170,8 +153,8 @@ public class CreateTransactionRequest {
    * Get type
    * @return type
   */
-  @NotNull @Valid 
-  @Schema(name = "type", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "type", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("type")
   public TransactionType getType() {
     return type;
@@ -181,37 +164,17 @@ public class CreateTransactionRequest {
     this.type = type;
   }
 
-  public CreateTransactionRequest inputType(InputType inputType) {
-    this.inputType = inputType;
-    return this;
-  }
-
-  /**
-   * Get inputType
-   * @return inputType
-  */
-  @Valid 
-  @Schema(name = "inputType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("inputType")
-  public InputType getInputType() {
-    return inputType;
-  }
-
-  public void setInputType(InputType inputType) {
-    this.inputType = inputType;
-  }
-
-  public CreateTransactionRequest accountId(UUID accountId) {
+  public PatchTransactionRequest accountId(UUID accountId) {
     this.accountId = accountId;
     return this;
   }
 
   /**
-   * ID счета
+   * Новый ID счета
    * @return accountId
   */
-  @NotNull @Valid 
-  @Schema(name = "accountId", description = "ID счета", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "accountId", description = "Новый ID счета", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("accountId")
   public UUID getAccountId() {
     return accountId;
@@ -221,17 +184,17 @@ public class CreateTransactionRequest {
     this.accountId = accountId;
   }
 
-  public CreateTransactionRequest excluded(Boolean excluded) {
+  public PatchTransactionRequest excluded(Boolean excluded) {
     this.excluded = excluded;
     return this;
   }
 
   /**
-   * Исключить из расчетов
+   * Новое значение флага исключения
    * @return excluded
   */
   
-  @Schema(name = "excluded", description = "Исключить из расчетов", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "excluded", description = "Новое значение флага исключения", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("excluded")
   public Boolean getExcluded() {
     return excluded;
@@ -249,34 +212,32 @@ public class CreateTransactionRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CreateTransactionRequest createTransactionRequest = (CreateTransactionRequest) o;
-    return Objects.equals(this.amount, createTransactionRequest.amount) &&
-        Objects.equals(this.currency, createTransactionRequest.currency) &&
-        Objects.equals(this.date, createTransactionRequest.date) &&
-        Objects.equals(this.categoryId, createTransactionRequest.categoryId) &&
-        Objects.equals(this.name, createTransactionRequest.name) &&
-        Objects.equals(this.type, createTransactionRequest.type) &&
-        Objects.equals(this.inputType, createTransactionRequest.inputType) &&
-        Objects.equals(this.accountId, createTransactionRequest.accountId) &&
-        Objects.equals(this.excluded, createTransactionRequest.excluded);
+    PatchTransactionRequest patchTransactionRequest = (PatchTransactionRequest) o;
+    return Objects.equals(this.amount, patchTransactionRequest.amount) &&
+        Objects.equals(this.currency, patchTransactionRequest.currency) &&
+        Objects.equals(this.date, patchTransactionRequest.date) &&
+        Objects.equals(this.categoryId, patchTransactionRequest.categoryId) &&
+        Objects.equals(this.name, patchTransactionRequest.name) &&
+        Objects.equals(this.type, patchTransactionRequest.type) &&
+        Objects.equals(this.accountId, patchTransactionRequest.accountId) &&
+        Objects.equals(this.excluded, patchTransactionRequest.excluded);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, currency, date, categoryId, name, type, inputType, accountId, excluded);
+    return Objects.hash(amount, currency, date, categoryId, name, type, accountId, excluded);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CreateTransactionRequest {\n");
+    sb.append("class PatchTransactionRequest {\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    inputType: ").append(toIndentedString(inputType)).append("\n");
     sb.append("    accountId: ").append(toIndentedString(accountId)).append("\n");
     sb.append("    excluded: ").append(toIndentedString(excluded)).append("\n");
     sb.append("}");
