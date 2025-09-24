@@ -6,6 +6,9 @@
 package com.finapp.api.controller;
 
 import com.finapp.api.model.CreateTransactionRequest;
+import com.finapp.api.model.ImportBatchSummary;
+import com.finapp.api.model.ImportHistoryResponse;
+import com.finapp.api.model.ImportTransactionResponse;
 import com.finapp.api.model.PagedTransactionsResponse;
 import com.finapp.api.model.PatchTransactionRequest;
 import com.finapp.api.model.ProblemDetails;
@@ -39,7 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T17:10:51.802634+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Transactions", description = "the Transactions API")
 public interface TransactionsApi {
@@ -114,6 +117,126 @@ public interface TransactionsApi {
     
     ResponseEntity<Void> deleteTransaction(
         @Parameter(name = "id", description = "Уникальный идентификатор транзакции", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+    );
+
+
+    /**
+     * GET /transactions/template : Download Excel template
+     * Скачивает предварительно настроенный Excel файл шаблона для заполнения транзакций.  **Структура шаблона:** - Дата (формат: YYYY-MM-DD) - Сумма (числовое значение) - Тип (INCOME/EXPENSE) - Категория (название категории) - Описание (текстовое описание транзакции) - Счет (ID или название счета) 
+     *
+     * @return Excel template file (status code 200)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "downloadTransactionTemplate",
+        summary = "Download Excel template",
+        description = "Скачивает предварительно настроенный Excel файл шаблона для заполнения транзакций.  **Структура шаблона:** - Дата (формат: YYYY-MM-DD) - Сумма (числовое значение) - Тип (INCOME/EXPENSE) - Категория (название категории) - Описание (текстовое описание транзакции) - Счет (ID или название счета) ",
+        tags = { "ImportExport" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Excel template file", content = {
+                @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", schema = @Schema(implementation = org.springframework.core.io.Resource.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/transactions/template",
+        produces = { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/problem+json" }
+    )
+    
+    ResponseEntity<org.springframework.core.io.Resource> downloadTransactionTemplate(
+        
+    );
+
+
+    /**
+     * GET /transactions/import/history : Get import history
+     * Возвращает историю импорта транзакций пользователя. 
+     *
+     * @param page Page number (0-based) (optional, default to 0)
+     * @param size Page size (optional, default to 20)
+     * @return Import history (status code 200)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "getImportHistory",
+        summary = "Get import history",
+        description = "Возвращает историю импорта транзакций пользователя. ",
+        tags = { "ImportExport" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Import history", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ImportHistoryResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ImportHistoryResponse.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/transactions/import/history",
+        produces = { "application/json", "application/problem+json" }
+    )
+    
+    ResponseEntity<ImportHistoryResponse> getImportHistory(
+        @Min(0) @Parameter(name = "page", description = "Page number (0-based)", in = ParameterIn.QUERY) @Valid @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+        @Min(1) @Max(100) @Parameter(name = "size", description = "Page size", in = ParameterIn.QUERY) @Valid @RequestParam(value = "size", required = false, defaultValue = "20") Integer size
+    );
+
+
+    /**
+     * GET /transactions/import/{importId} : Get import result
+     * Получает детальную информацию о результате конкретного импорта. 
+     *
+     * @param importId Import ID (required)
+     * @return Import result details (status code 200)
+     *         or Import not found (status code 404)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "getImportResult",
+        summary = "Get import result",
+        description = "Получает детальную информацию о результате конкретного импорта. ",
+        tags = { "ImportExport" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Import result details", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ImportBatchSummary.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ImportBatchSummary.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Import not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/transactions/import/{importId}",
+        produces = { "application/json", "application/problem+json" }
+    )
+    
+    ResponseEntity<ImportBatchSummary> getImportResult(
+        @Parameter(name = "importId", description = "Import ID", required = true, in = ParameterIn.PATH) @PathVariable("importId") UUID importId
     );
 
 
@@ -198,6 +321,52 @@ public interface TransactionsApi {
         @Parameter(name = "sort", description = "Критерии сортировки в формате 'field,direction'", in = ParameterIn.QUERY) @Valid @RequestParam(value = "sort", required = false, defaultValue = "date,desc") String sort,
         @Parameter(name = "categoryId", description = "Фильтр по ID категории", in = ParameterIn.QUERY) @Valid @RequestParam(value = "categoryId", required = false) UUID categoryId,
         @Parameter(name = "type", description = "Фильтр по типу транзакции", in = ParameterIn.QUERY) @Valid @RequestParam(value = "type", required = false) TransactionType type
+    );
+
+
+    /**
+     * POST /transactions/import : Import transactions from Excel
+     * Импортирует транзакции из загруженного Excel файла. Возвращает результат импорта с количеством успешных записей и ошибок. 
+     *
+     * @param file Excel файл с транзакциями (required)
+     * @param skipFirstRow Пропустить первую строку (заголовки) (optional, default to true)
+     * @return Import completed (status code 200)
+     *         or Invalid file format or structure (status code 400)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "importTransactions",
+        summary = "Import transactions from Excel",
+        description = "Импортирует транзакции из загруженного Excel файла. Возвращает результат импорта с количеством успешных записей и ошибок. ",
+        tags = { "ImportExport" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Import completed", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ImportTransactionResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ImportTransactionResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid file format or structure", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/transactions/import",
+        produces = { "application/json", "application/problem+json" },
+        consumes = { "multipart/form-data" }
+    )
+    
+    ResponseEntity<ImportTransactionResponse> importTransactions(
+        @Parameter(name = "file", description = "Excel файл с транзакциями", required = true) @RequestPart(value = "file", required = true) MultipartFile file,
+        @Parameter(name = "skipFirstRow", description = "Пропустить первую строку (заголовки)") @Valid @RequestParam(value = "skipFirstRow", required = false) Boolean skipFirstRow
     );
 
 

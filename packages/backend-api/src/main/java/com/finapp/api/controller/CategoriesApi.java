@@ -8,6 +8,8 @@ package com.finapp.api.controller;
 import com.finapp.api.model.CategoryDto;
 import com.finapp.api.model.CreateCategoryRequest;
 import com.finapp.api.model.ProblemDetails;
+import java.util.UUID;
+import com.finapp.api.model.UpdateCategoryRequest;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T17:10:51.802634+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Categories", description = "the Categories API")
 public interface CategoriesApi {
@@ -84,6 +86,44 @@ public interface CategoriesApi {
 
 
     /**
+     * DELETE /categories/{id} : Delete category
+     * Удаляет категорию. Если в категории есть транзакции, они будут перенесены в категорию \&quot;Без категории\&quot;. 
+     *
+     * @param id Category ID (required)
+     * @return Category deleted successfully (status code 204)
+     *         or Category not found (status code 404)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "deleteCategory",
+        summary = "Delete category",
+        description = "Удаляет категорию. Если в категории есть транзакции, они будут перенесены в категорию \"Без категории\". ",
+        tags = { "Categories" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Category deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found", content = {
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.DELETE,
+        value = "/categories/{id}",
+        produces = { "application/problem+json" }
+    )
+    
+    ResponseEntity<Void> deleteCategory(
+        @Parameter(name = "id", description = "Category ID", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+    );
+
+
+    /**
      * GET /categories : Get categories list
      * Получает список всех категорий пользователя. Возвращает иерархическую структуру с подкатегориями. 
      *
@@ -117,6 +157,100 @@ public interface CategoriesApi {
     
     ResponseEntity<List<CategoryDto>> getCategories(
         
+    );
+
+
+    /**
+     * GET /categories/{id} : Get category by ID
+     * Получает детальную информацию о категории по её идентификатору. 
+     *
+     * @param id Category ID (required)
+     * @return Category details (status code 200)
+     *         or Category not found (status code 404)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "getCategoryById",
+        summary = "Get category by ID",
+        description = "Получает детальную информацию о категории по её идентификатору. ",
+        tags = { "Categories" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Category details", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryDto.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = CategoryDto.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Category not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/categories/{id}",
+        produces = { "application/json", "application/problem+json" }
+    )
+    
+    ResponseEntity<CategoryDto> getCategoryById(
+        @Parameter(name = "id", description = "Category ID", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+    );
+
+
+    /**
+     * PUT /categories/{id} : Update category
+     * Полностью обновляет данные категории. 
+     *
+     * @param id Category ID (required)
+     * @param updateCategoryRequest  (required)
+     * @return Category updated successfully (status code 200)
+     *         or Category not found (status code 404)
+     *         or Invalid request data (status code 400)
+     *         or Unauthorized (status code 401)
+     */
+    @Operation(
+        operationId = "updateCategory",
+        summary = "Update category",
+        description = "Полностью обновляет данные категории. ",
+        tags = { "Categories" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Category updated successfully", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryDto.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = CategoryDto.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Category not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/categories/{id}",
+        produces = { "application/json", "application/problem+json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<CategoryDto> updateCategory(
+        @Parameter(name = "id", description = "Category ID", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
+        @Parameter(name = "UpdateCategoryRequest", description = "", required = true) @Valid @RequestBody UpdateCategoryRequest updateCategoryRequest
     );
 
 }

@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T12:11:35.130175186Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T17:10:51.802634+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Authentication", description = "the Authentication API")
 public interface AuthApi {
@@ -156,6 +156,39 @@ public interface AuthApi {
     
     ResponseEntity<ChangePasswordResponse> changeUserPassword(
         @Parameter(name = "ChangePasswordRequest", description = "", required = true) @Valid @RequestBody ChangePasswordRequest changePasswordRequest
+    );
+
+
+    /**
+     * POST /auth/logout : User logout
+     * Выход пользователя из системы. Добавляет JWT токен в черный список для предотвращения дальнейшего использования. 
+     *
+     * @return Successfully logged out (status code 204)
+     *         or Invalid or expired token (status code 401)
+     */
+    @Operation(
+        operationId = "logoutUser",
+        summary = "User logout",
+        description = "Выход пользователя из системы. Добавляет JWT токен в черный список для предотвращения дальнейшего использования. ",
+        tags = { "Authentication" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Successfully logged out"),
+            @ApiResponse(responseCode = "401", description = "Invalid or expired token", content = {
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/auth/logout",
+        produces = { "application/problem+json" }
+    )
+    
+    ResponseEntity<Void> logoutUser(
+        
     );
 
 

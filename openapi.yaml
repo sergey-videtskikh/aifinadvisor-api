@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: FinApp API
   description: API for financial application
-  version: 1.2.0
+  version: 1.3.0
   contact:
     name: API Support
     email: support@finapp.com
@@ -69,6 +69,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
 
+  /auth/logout:
+    post:
+      operationId: logoutUser
+      tags: [Authentication]
+      summary: User logout
+      description: |
+        Выход пользователя из системы.
+        Добавляет JWT токен в черный список для предотвращения дальнейшего использования.
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Successfully logged out
+        '401':
+          description: Invalid or expired token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
   /auth/telegram:
     post:
       operationId: authenticateWithTelegram
@@ -127,6 +147,187 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '401':
           description: Unauthorized access
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  # User endpoints
+  /user/me:
+    get:
+      operationId: getCurrentUser
+      tags: [User]
+      summary: Get current user information
+      description: |
+        Возвращает детальную информацию об аутентифицированном пользователе.
+        Включает профиль, настройки и основную статистику.
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  # Analytics endpoints
+  /analytics:
+    get:
+      operationId: getAnalytics
+      tags: [Analytics]
+      summary: Get analytics data
+      description: |
+        Возвращает аналитическую информацию о доходах, расходах, балансе и последних транзакциях за указанный период.
+        По умолчанию, период составляет последний год.
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: Конечная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /analytics/categories:
+    get:
+      operationId: getCategoriesAnalytics
+      tags: [Analytics]
+      summary: Get categories analytics
+      description: |
+        Возвращает аналитику по категориям - доходы и расходы сгруппированные по категориям за период.
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: Конечная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: type
+          in: query
+          description: Тип транзакций для анализа
+          required: false
+          schema:
+            $ref: '#/components/schemas/TransactionType'
+      responses:
+        '200':
+          description: Categories analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryAnalyticsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /analytics/summary:
+    get:
+      operationId: getPeriodSummary
+      tags: [Analytics]
+      summary: Get period summary
+      description: |
+        Возвращает сводную аналитику за указанный период с группировкой по месяцам.
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: Конечная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Period summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodSummaryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /analytics/daily:
+    get:
+      operationId: getDailyTransactions
+      tags: [Analytics]
+      summary: Get daily transactions
+      description: |
+        Возвращает ежедневную статистику транзакций за период с группировкой по дням.
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: Конечная дата периода в формате YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Daily transactions statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTransactionsResponse'
+        '401':
+          description: Unauthorized
           content:
             application/problem+json:
               schema:
@@ -380,6 +581,155 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
 
+  # Import/Export endpoints
+  /transactions/template:
+    get:
+      operationId: downloadTransactionTemplate
+      tags: [ImportExport]
+      summary: Download Excel template
+      description: |
+        Скачивает предварительно настроенный Excel файл шаблона для заполнения транзакций.
+
+        **Структура шаблона:**
+        - Дата (формат: YYYY-MM-DD)
+        - Сумма (числовое значение)
+        - Тип (INCOME/EXPENSE)
+        - Категория (название категории)
+        - Описание (текстовое описание транзакции)
+        - Счет (ID или название счета)
+      responses:
+        '200':
+          description: Excel template file
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /transactions/import:
+    post:
+      operationId: importTransactions
+      tags: [ImportExport]
+      summary: Import transactions from Excel
+      description: |
+        Импортирует транзакции из загруженного Excel файла.
+        Возвращает результат импорта с количеством успешных записей и ошибок.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Excel файл с транзакциями
+                skipFirstRow:
+                  type: boolean
+                  default: true
+                  description: Пропустить первую строку (заголовки)
+              required: [file]
+      responses:
+        '200':
+          description: Import completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportTransactionResponse'
+        '400':
+          description: Invalid file format or structure
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /transactions/import/history:
+    get:
+      operationId: getImportHistory
+      tags: [ImportExport]
+      summary: Get import history
+      description: |
+        Возвращает историю импорта транзакций пользователя.
+      parameters:
+        - name: page
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Import history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportHistoryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /transactions/import/{importId}:
+    get:
+      operationId: getImportResult
+      tags: [ImportExport]
+      summary: Get import result
+      description: |
+        Получает детальную информацию о результате конкретного импорта.
+      parameters:
+        - name: importId
+          in: path
+          description: Import ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Import result details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportBatchSummary'
+        '404':
+          description: Import not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
   # Category endpoints
   /categories:
     get:
@@ -438,6 +788,448 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '409':
           description: Category name already exists
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /categories/{id}:
+    get:
+      operationId: getCategoryById
+      tags: [Categories]
+      summary: Get category by ID
+      description: |
+        Получает детальную информацию о категории по её идентификатору.
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+        '404':
+          description: Category not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put:
+      operationId: updateCategory
+      tags: [Categories]
+      summary: Update category
+      description: |
+        Полностью обновляет данные категории.
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+        '404':
+          description: Category not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '400':
+          description: Invalid request data
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    delete:
+      operationId: deleteCategory
+      tags: [Categories]
+      summary: Delete category
+      description: |
+        Удаляет категорию. Если в категории есть транзакции, они будут перенесены в категорию "Без категории".
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Category deleted successfully
+        '404':
+          description: Category not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  # Receipt endpoints
+  /receipts:
+    get:
+      operationId: getReceipts
+      tags: [Receipts]
+      summary: Get receipts list
+      description: |
+        Получает пагинированный список чеков пользователя.
+      parameters:
+        - name: page
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: transactionId
+          in: query
+          description: Filter by transaction ID
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Receipts list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedReceiptResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    post:
+      operationId: uploadReceipt
+      tags: [Receipts]
+      summary: Upload receipt
+      description: |
+        Загружает файл чека (изображение или PDF) с возможностью привязки к транзакции.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл чека (изображение или PDF)
+                transactionId:
+                  type: string
+                  format: uuid
+                  description: ID транзакции для привязки
+                description:
+                  type: string
+                  description: Описание чека
+              required: [file]
+      responses:
+        '201':
+          description: Receipt uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadReceiptResponse'
+        '400':
+          description: Invalid file format
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /receipts/{id}:
+    get:
+      operationId: getReceiptById
+      tags: [Receipts]
+      summary: Get receipt by ID
+      description: |
+        Получает информацию о чеке по его идентификатору.
+      parameters:
+        - name: id
+          in: path
+          description: Receipt ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Receipt details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptResponse'
+        '404':
+          description: Receipt not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put:
+      operationId: updateReceipt
+      tags: [Receipts]
+      summary: Update receipt
+      description: |
+        Обновляет информацию о чеке.
+      parameters:
+        - name: id
+          in: path
+          description: Receipt ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReceiptRequest'
+      responses:
+        '200':
+          description: Receipt updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptResponse'
+        '404':
+          description: Receipt not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    delete:
+      operationId: deleteReceipt
+      tags: [Receipts]
+      summary: Delete receipt
+      description: |
+        Удаляет чек и связанный с ним файл.
+      parameters:
+        - name: id
+          in: path
+          description: Receipt ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Receipt deleted successfully
+        '404':
+          description: Receipt not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /receipts/{id}/download:
+    get:
+      operationId: downloadReceipt
+      tags: [Receipts]
+      summary: Download receipt file
+      description: |
+        Скачивает файл чека.
+      parameters:
+        - name: id
+          in: path
+          description: Receipt ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Receipt file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            image/*:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Receipt not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  # Dictionary endpoints
+  /dictionaries/currencies:
+    get:
+      operationId: getCurrencies
+      tags: [Dictionaries]
+      summary: Get currencies list
+      description: |
+        Возвращает справочник всех поддерживаемых валют в системе.
+        Список содержит ISO-4217 коды валют с описаниями.
+      responses:
+        '200':
+          description: Currencies list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Currency'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /dictionaries/user-categories:
+    get:
+      operationId: getUserCategories
+      tags: [Dictionaries]
+      summary: Get user categories
+      description: |
+        Возвращает персональный иерархический список категорий для текущего пользователя.
+        Этот эндпоинт предназначен для чтения списка категорий (например, для селектов в UI).
+      responses:
+        '200':
+          description: User categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /dictionaries/default-categories:
+    get:
+      operationId: getDefaultCategories
+      tags: [Dictionaries]
+      summary: Get default categories
+      description: |
+        Возвращает список категорий по умолчанию, которые доступны всем пользователям.
+        Используется при первой настройке аккаунта.
+      responses:
+        '200':
+          description: Default categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DefaultCategoryDto'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /dictionaries/category-icons:
+    get:
+      operationId: getCategoryIcons
+      tags: [Dictionaries]
+      summary: Get category icons
+      description: |
+        Возвращает справочник доступных иконок для категорий.
+        Содержит группированный список иконок с описаниями и цветами.
+      responses:
+        '200':
+          description: Category icons
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryIconsResponse'
+        '401':
+          description: Unauthorized
           content:
             application/problem+json:
               schema:
@@ -921,6 +1713,423 @@ components:
                 type: string
                 description: "Код ошибки"
                 example: "POSITIVE_NUMBER_REQUIRED"
+
+    # User DTOs
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "User ID"
+        email:
+          type: string
+          format: email
+          description: "Email пользователя"
+        firstName:
+          type: string
+          description: "Имя пользователя"
+        lastName:
+          type: string
+          description: "Фамилия пользователя"
+        phoneNumber:
+          type: string
+          nullable: true
+          description: "Номер телефона"
+        telegramNickname:
+          type: string
+          nullable: true
+          description: "Telegram никнейм"
+        createdAt:
+          type: string
+          format: date-time
+          description: "Дата создания аккаунта"
+        isEmailVerified:
+          type: boolean
+          description: "Подтвержден ли email"
+        defaultCurrency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Валюта по умолчанию (ISO-4217)"
+          default: "RUB"
+
+    # Analytics DTOs
+    AnalyticsResponse:
+      type: object
+      properties:
+        metrics:
+          type: object
+          properties:
+            income:
+              type: string
+              pattern: '^\d+\.\d{2}$'
+              description: "Сумма доходов за период"
+            expense:
+              type: string
+              pattern: '^\d+\.\d{2}$'
+              description: "Сумма расходов за период"
+            balance:
+              type: string
+              pattern: '^\d+\.\d{2}$'
+              description: "Итоговый баланс"
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Код валюты ISO-4217"
+          default: "RUB"
+        recentTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionDto'
+
+    CategoryAnalyticsResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              categoryId:
+                type: string
+                format: uuid
+              categoryName:
+                type: string
+              amount:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+              percentage:
+                type: number
+                format: double
+              transactionCount:
+                type: integer
+        totalAmount:
+          type: string
+          pattern: '^\d+\.\d{2}$'
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: "RUB"
+
+    PeriodSummaryResponse:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+                format: date
+                description: "Месяц в формате YYYY-MM"
+              income:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+              expense:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+              balance:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: "RUB"
+
+    DailyTransactionsResponse:
+      type: object
+      properties:
+        days:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              income:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+              expense:
+                type: string
+                pattern: '^\d+\.\d{2}$'
+              transactionCount:
+                type: integer
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: "RUB"
+
+    # Import/Export DTOs
+    ImportTransactionResponse:
+      type: object
+      properties:
+        importId:
+          type: string
+          format: uuid
+          description: "ID импорта"
+        successCount:
+          type: integer
+          description: "Количество успешно импортированных записей"
+        errorCount:
+          type: integer
+          description: "Количество записей с ошибками"
+        warningCount:
+          type: integer
+          description: "Количество записей с предупреждениями"
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportError'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportWarning'
+        processingTime:
+          type: string
+          description: "Время обработки"
+        status:
+          type: string
+          enum: [COMPLETED, COMPLETED_WITH_ERRORS, FAILED]
+
+    ImportError:
+      type: object
+      properties:
+        row:
+          type: integer
+          description: "Номер строки"
+        field:
+          type: string
+          description: "Поле с ошибкой"
+        message:
+          type: string
+          description: "Сообщение об ошибке"
+        value:
+          type: string
+          description: "Значение, вызвавшее ошибку"
+
+    ImportWarning:
+      type: object
+      properties:
+        row:
+          type: integer
+        message:
+          type: string
+        suggestion:
+          type: string
+
+    ImportHistoryResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportBatchSummary'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
+        size:
+          type: integer
+
+    ImportBatchSummary:
+      type: object
+      properties:
+        importId:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [COMPLETED, COMPLETED_WITH_ERRORS, FAILED]
+        successCount:
+          type: integer
+        errorCount:
+          type: integer
+        totalCount:
+          type: integer
+
+    # Receipt DTOs
+    ReceiptResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        originalFilename:
+          type: string
+        contentType:
+          type: string
+        fileSize:
+          type: integer
+        uploadedAt:
+          type: string
+          format: date-time
+        transactionId:
+          type: string
+          format: uuid
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        downloadUrl:
+          type: string
+          description: "URL для скачивания"
+
+    PagedReceiptResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptResponse'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
+        size:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+
+    UploadReceiptResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        contentType:
+          type: string
+        fileSize:
+          type: integer
+        uploadedAt:
+          type: string
+          format: date-time
+        downloadUrl:
+          type: string
+
+    UpdateReceiptRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Описание чека"
+        transactionId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID транзакции для привязки"
+
+    # Dictionary DTOs
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: "Код валюты ISO-4217"
+          example: "RUB"
+        name:
+          type: string
+          description: "Название валюты"
+          example: "Российский рубль"
+        symbol:
+          type: string
+          description: "Символ валюты"
+          example: "₽"
+
+    DefaultCategoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        icon:
+          type: string
+          nullable: true
+        color:
+          type: string
+          nullable: true
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+
+    CategoryIconDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: "Название иконки"
+        unicode:
+          type: string
+          description: "Unicode символ"
+        category:
+          type: string
+          description: "Категория иконки"
+
+    CategoryIconsResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              icons:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryIconDto'
+
+    # Category management DTOs
+    UpdateCategoryRequest:
+      type: object
+      required: [name, type]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: "Название категории"
+        type:
+          $ref: '#/components/schemas/CategoryType'
+        icon:
+          type: string
+          nullable: true
+          description: "Иконка категории"
+        color:
+          type: string
+          nullable: true
+          pattern: '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+          description: "Цвет категории в HEX формате"
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "ID родительской категории"
 
 
 
