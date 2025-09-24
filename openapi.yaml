@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: FinApp API
   description: API for financial application
-  version: 1.3.0
+  version: 1.4.0
   contact:
     name: API Support
     email: support@finapp.com
