@@ -96,7 +96,10 @@ jobs:
           git add .
           git commit -m "chore: update generated code" || echo "No changes to commit"
 
-          # Bump version
+          # Sync versions first to get OpenAPI version
+          npm run update:package-versions
+
+          # Then bump version
           npm run version:${{ steps.version.outputs.bump }}
 
           # Get the new version and set as environment variable
