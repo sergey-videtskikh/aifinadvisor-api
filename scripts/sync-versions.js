@@ -15,6 +15,17 @@ const frontendPackagePath = path.join('packages', 'frontend-api', 'package.json'
 if (fs.existsSync(frontendPackagePath)) {
   const frontendPackage = JSON.parse(fs.readFileSync(frontendPackagePath, 'utf8'));
   frontendPackage.version = newVersion;
+
+  // Fix repository URL and add publishConfig for GitHub Packages
+  frontendPackage.repository = {
+    "type": "git",
+    "url": "https://github.com/sergey-videtskikh/aifinadvisor-api.git"
+  };
+
+  frontendPackage.publishConfig = {
+    "@finapp:registry": "https://npm.pkg.github.com"
+  };
+
   fs.writeFileSync(frontendPackagePath, JSON.stringify(frontendPackage, null, 2) + '\n');
   console.log(`✅ Updated frontend package to ${newVersion}`);
 }

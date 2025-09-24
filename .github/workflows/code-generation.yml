@@ -96,7 +96,12 @@ jobs:
 
       - name: Publish Frontend Package to GitHub Packages
         if: steps.version.outputs.bump != 'none'
-        run: npm run publish:frontend
+        run: |
+          echo "Publishing frontend package to GitHub Packages..."
+          cd packages/frontend-api
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+          echo "@finapp:registry=https://npm.pkg.github.com" >> .npmrc
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
