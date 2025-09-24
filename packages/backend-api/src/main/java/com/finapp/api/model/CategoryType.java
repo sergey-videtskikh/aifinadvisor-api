@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Тип категории
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T10:01:46.018878+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
 public enum CategoryType {
   
   INCOME("INCOME"),

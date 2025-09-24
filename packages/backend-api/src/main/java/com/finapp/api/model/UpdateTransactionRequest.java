@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * UpdateTransactionRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T10:01:46.018878+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T09:58:51.873684037Z[Etc/UTC]")
 public class UpdateTransactionRequest {
 
   private String amount;
@@ -71,7 +71,7 @@ public class UpdateTransactionRequest {
    * @return date
   */
   @Valid 
-  @Schema(name = "date", example = "Tue Sep 16 03:00:00 MSK 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "date", example = "Tue Sep 16 00:00:00 UTC 2025", description = "Дата транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("date")
   public LocalDate getDate() {
     return date;
