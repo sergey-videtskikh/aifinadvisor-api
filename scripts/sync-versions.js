@@ -23,7 +23,7 @@ if (fs.existsSync(frontendPackagePath)) {
   };
 
   frontendPackage.publishConfig = {
-    "@finapp:registry": "https://npm.pkg.github.com"
+    "@sergey-videtskikh:registry": "https://npm.pkg.github.com"
   };
 
   fs.writeFileSync(frontendPackagePath, JSON.stringify(frontendPackage, null, 2) + '\n');

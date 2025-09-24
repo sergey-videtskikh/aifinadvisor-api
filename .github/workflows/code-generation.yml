@@ -100,7 +100,7 @@ jobs:
           echo "Publishing frontend package to GitHub Packages..."
           cd packages/frontend-api
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
-          echo "@finapp:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "@sergey-videtskikh:registry=https://npm.pkg.github.com" >> .npmrc
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -136,7 +136,7 @@ jobs:
 
             ### Published Packages:
             - **Backend (Maven)**: `com.finapp:finapp-api-client:${{ env.NEW_VERSION }}`
-            - **Frontend (NPM)**: `@finapp/api-client@${{ env.NEW_VERSION }}`
+            - **Frontend (NPM)**: `@sergey-videtskikh/finapp-api-client@${{ env.NEW_VERSION }}`
 
             ### Usage:
 
@@ -151,7 +151,7 @@ jobs:
 
             #### Frontend (NPM)
             ```bash
-            npm install @finapp/api-client@${{ env.NEW_VERSION }}
+            npm install @sergey-videtskikh/finapp-api-client@${{ env.NEW_VERSION }}
             ```
 
             ### Changes:
