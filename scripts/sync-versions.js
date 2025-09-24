@@ -4,9 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
 
-// Read main package.json version
+// Read OpenAPI spec version
+const openApiPath = 'openapi.yaml';
+const openApiContent = fs.readFileSync(openApiPath, 'utf8');
+const versionMatch = openApiContent.match(/version:\s*(.+)/);
+const newVersion = versionMatch ? versionMatch[1].trim() : '1.0.0';
+
+// Update main package.json version first
 const mainPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const newVersion = mainPackageJson.version;
+mainPackageJson.version = newVersion;
+fs.writeFileSync('package.json', JSON.stringify(mainPackageJson, null, 2) + '\n');
+console.log(`✅ Updated main package.json to ${newVersion}`);
 
 console.log(`🔄 Syncing version to ${newVersion}`);
 
@@ -45,19 +53,6 @@ if (fs.existsSync(pomPath)) {
   console.log(`✅ Updated backend pom.xml to ${newVersion}`);
 }
 
-// Update OpenAPI spec version
-const openApiPath = 'openapi.yaml';
-if (fs.existsSync(openApiPath)) {
-  let openApiContent = fs.readFileSync(openApiPath, 'utf8');
-
-  // Replace version in OpenAPI spec
-  openApiContent = openApiContent.replace(
-    /version:\s*[\d\.]+([-\w]*)?/,
-    `version: ${newVersion}`
-  );
-
-  fs.writeFileSync(openApiPath, openApiContent);
-  console.log(`✅ Updated OpenAPI spec to ${newVersion}`);
-}
+// Note: OpenAPI spec is the source of truth for version, so we don't update it here
 
 console.log(`🎉 All packages synced to version ${newVersion}`);
