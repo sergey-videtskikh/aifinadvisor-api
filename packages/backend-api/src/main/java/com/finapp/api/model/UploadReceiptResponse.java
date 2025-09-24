@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * UploadReceiptResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T19:20:01.059020+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T20:42:31.196223853Z[Etc/UTC]")
 public class UploadReceiptResponse {
 
   private UUID id;
