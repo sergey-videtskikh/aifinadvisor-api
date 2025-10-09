@@ -18,7 +18,7 @@ import jakarta.annotation.Generated;
  * ImportError
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T20:42:31.196223853Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T21:12:14.599634+03:00[Europe/Moscow]")
 public class ImportError {
 
   private Integer row;

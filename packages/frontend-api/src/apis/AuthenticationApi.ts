@@ -127,20 +127,20 @@ export interface AuthenticationApiInterface {
     logoutUser(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. 
      * @summary User registration
      * @param {RegisterRequest} registerRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticationApiInterface
      */
-    registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+    registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>>;
 
     /**
-     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. 
      * User registration
      */
-    registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+    registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse>;
 
 }
 
@@ -298,10 +298,10 @@ export class AuthenticationApi extends runtime.BaseAPI implements Authentication
     }
 
     /**
-     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. 
      * User registration
      */
-    async registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JwtResponse>> {
         if (requestParameters.registerRequest === null || requestParameters.registerRequest === undefined) {
             throw new runtime.RequiredError('registerRequest','Required parameter requestParameters.registerRequest was null or undefined when calling registerUser.');
         }
@@ -320,15 +320,16 @@ export class AuthenticationApi extends runtime.BaseAPI implements Authentication
             body: RegisterRequestToJSON(requestParameters.registerRequest),
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => JwtResponseFromJSON(jsonValue));
     }
 
     /**
-     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. 
      * User registration
      */
-    async registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.registerUserRaw(requestParameters, initOverrides);
+    async registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JwtResponse> {
+        const response = await this.registerUserRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

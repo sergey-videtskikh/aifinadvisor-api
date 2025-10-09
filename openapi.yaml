@@ -51,7 +51,8 @@ paths:
       summary: User registration
       description: |
         Регистрирует нового пользователя в системе.
-        Создает аккаунт с указанными данными и валидирует email.
+        Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию.
+        Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам.
       security: []
       requestBody:
         required: true
@@ -61,9 +62,19 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
-          description: User successfully registered
+          description: User successfully registered and authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
         '400':
           description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: User already exists
           content:
             application/problem+json:
               schema:

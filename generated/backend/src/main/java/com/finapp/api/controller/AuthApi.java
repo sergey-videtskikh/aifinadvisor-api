@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-24T20:42:31.196223853Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T21:12:14.599634+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "Authentication", description = "the Authentication API")
 public interface AuthApi {
@@ -194,20 +194,29 @@ public interface AuthApi {
 
     /**
      * POST /auth/register : User registration
-     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. 
+     * Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. 
      *
      * @param registerRequest  (required)
-     * @return User successfully registered (status code 201)
+     * @return User successfully registered and authenticated (status code 201)
      *         or Validation error (status code 400)
+     *         or User already exists (status code 409)
      */
     @Operation(
         operationId = "registerUser",
         summary = "User registration",
-        description = "Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными и валидирует email. ",
+        description = "Регистрирует нового пользователя в системе. Создает аккаунт с указанными данными, валидирует email и автоматически выполняет аутентификацию. Возвращает JWT токен для немедленного доступа к защищенным эндпоинтам. ",
         tags = { "Authentication" },
         responses = {
-            @ApiResponse(responseCode = "201", description = "User successfully registered"),
+            @ApiResponse(responseCode = "201", description = "User successfully registered and authenticated", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = JwtResponse.class))
+            }),
             @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
+                @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
+            }),
+            @ApiResponse(responseCode = "409", description = "User already exists", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetails.class)),
                 @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetails.class))
             })
         }
@@ -215,11 +224,11 @@ public interface AuthApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/auth/register",
-        produces = { "application/problem+json" },
+        produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<Void> registerUser(
+    ResponseEntity<JwtResponse> registerUser(
         @Parameter(name = "RegisterRequest", description = "", required = true) @Valid @RequestBody RegisterRequest registerRequest
     );
 
