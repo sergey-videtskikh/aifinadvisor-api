@@ -5,12 +5,16 @@ on:
     paths:
       - 'api-docs/**'
       - 'openapi.yaml'
+      - '.github/workflows/code-generation.yml'
+      - 'scripts/**'
     branches:
       - main
   pull_request:
     paths:
       - 'api-docs/**'
       - 'openapi.yaml'
+      - '.github/workflows/code-generation.yml'
+      - 'scripts/**'
 
 jobs:
   build-and-publish:
