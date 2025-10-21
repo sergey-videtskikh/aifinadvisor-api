@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * CreateTransactionRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T19:39:04.913677996Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:36:47.145286399Z[Etc/UTC]")
 public class CreateTransactionRequest {
 
   private String amount;
@@ -37,6 +37,8 @@ public class CreateTransactionRequest {
   private UUID categoryId;
 
   private String name;
+
+  private String description;
 
   private TransactionType type;
 
@@ -161,6 +163,26 @@ public class CreateTransactionRequest {
     this.name = name;
   }
 
+  public CreateTransactionRequest description(String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * Подробное описание транзакции
+   * @return description
+  */
+  @Size(max = 500) 
+  @Schema(name = "description", example = "Обед с коллегами в кафе на Тверской", description = "Подробное описание транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   public CreateTransactionRequest type(TransactionType type) {
     this.type = type;
     return this;
@@ -255,6 +277,7 @@ public class CreateTransactionRequest {
         Objects.equals(this.date, createTransactionRequest.date) &&
         Objects.equals(this.categoryId, createTransactionRequest.categoryId) &&
         Objects.equals(this.name, createTransactionRequest.name) &&
+        Objects.equals(this.description, createTransactionRequest.description) &&
         Objects.equals(this.type, createTransactionRequest.type) &&
         Objects.equals(this.inputType, createTransactionRequest.inputType) &&
         Objects.equals(this.accountId, createTransactionRequest.accountId) &&
@@ -263,7 +286,7 @@ public class CreateTransactionRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, currency, date, categoryId, name, type, inputType, accountId, excluded);
+    return Objects.hash(amount, currency, date, categoryId, name, description, type, inputType, accountId, excluded);
   }
 
   @Override
@@ -275,6 +298,7 @@ public class CreateTransactionRequest {
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    inputType: ").append(toIndentedString(inputType)).append("\n");
     sb.append("    accountId: ").append(toIndentedString(accountId)).append("\n");

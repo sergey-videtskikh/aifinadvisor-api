@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * CreateCategoryRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T19:39:04.913677996Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:36:47.145286399Z[Etc/UTC]")
 public class CreateCategoryRequest {
 
   private String name;
@@ -36,6 +36,8 @@ public class CreateCategoryRequest {
   private JsonNullable<String> icon = JsonNullable.<String>undefined();
 
   private JsonNullable<String> iconColor = JsonNullable.<String>undefined();
+
+  private Integer displayOrder;
 
   public CreateCategoryRequest() {
     super();
@@ -149,6 +151,27 @@ public class CreateCategoryRequest {
     this.iconColor = iconColor;
   }
 
+  public CreateCategoryRequest displayOrder(Integer displayOrder) {
+    this.displayOrder = displayOrder;
+    return this;
+  }
+
+  /**
+   * Порядок отображения категории (меньше = выше в списке)
+   * minimum: 0
+   * @return displayOrder
+  */
+  @Min(0) 
+  @Schema(name = "displayOrder", example = "1", description = "Порядок отображения категории (меньше = выше в списке)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("displayOrder")
+  public Integer getDisplayOrder() {
+    return displayOrder;
+  }
+
+  public void setDisplayOrder(Integer displayOrder) {
+    this.displayOrder = displayOrder;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -162,7 +185,8 @@ public class CreateCategoryRequest {
         Objects.equals(this.type, createCategoryRequest.type) &&
         equalsNullable(this.parentId, createCategoryRequest.parentId) &&
         equalsNullable(this.icon, createCategoryRequest.icon) &&
-        equalsNullable(this.iconColor, createCategoryRequest.iconColor);
+        equalsNullable(this.iconColor, createCategoryRequest.iconColor) &&
+        Objects.equals(this.displayOrder, createCategoryRequest.displayOrder);
   }
 
   private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
@@ -171,7 +195,7 @@ public class CreateCategoryRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type, hashCodeNullable(parentId), hashCodeNullable(icon), hashCodeNullable(iconColor));
+    return Objects.hash(name, type, hashCodeNullable(parentId), hashCodeNullable(icon), hashCodeNullable(iconColor), displayOrder);
   }
 
   private static <T> int hashCodeNullable(JsonNullable<T> a) {
@@ -190,6 +214,7 @@ public class CreateCategoryRequest {
     sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("    icon: ").append(toIndentedString(icon)).append("\n");
     sb.append("    iconColor: ").append(toIndentedString(iconColor)).append("\n");
+    sb.append("    displayOrder: ").append(toIndentedString(displayOrder)).append("\n");
     sb.append("}");
     return sb.toString();
   }

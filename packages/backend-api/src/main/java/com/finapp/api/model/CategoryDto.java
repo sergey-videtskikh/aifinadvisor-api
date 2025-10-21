@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * CategoryDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T19:39:04.913677996Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:36:47.145286399Z[Etc/UTC]")
 public class CategoryDto {
 
   private UUID id;
@@ -40,6 +40,8 @@ public class CategoryDto {
   private JsonNullable<String> icon = JsonNullable.<String>undefined();
 
   private JsonNullable<String> iconColor = JsonNullable.<String>undefined();
+
+  private Integer displayOrder;
 
   @Valid
   private List<@Valid CategoryDto> children;
@@ -164,6 +166,27 @@ public class CategoryDto {
     this.iconColor = iconColor;
   }
 
+  public CategoryDto displayOrder(Integer displayOrder) {
+    this.displayOrder = displayOrder;
+    return this;
+  }
+
+  /**
+   * Порядок отображения категории (меньше = выше в списке)
+   * minimum: 0
+   * @return displayOrder
+  */
+  @Min(0) 
+  @Schema(name = "displayOrder", example = "1", description = "Порядок отображения категории (меньше = выше в списке)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("displayOrder")
+  public Integer getDisplayOrder() {
+    return displayOrder;
+  }
+
+  public void setDisplayOrder(Integer displayOrder) {
+    this.displayOrder = displayOrder;
+  }
+
   public CategoryDto children(List<@Valid CategoryDto> children) {
     this.children = children;
     return this;
@@ -207,6 +230,7 @@ public class CategoryDto {
         equalsNullable(this.parentId, categoryDto.parentId) &&
         equalsNullable(this.icon, categoryDto.icon) &&
         equalsNullable(this.iconColor, categoryDto.iconColor) &&
+        Objects.equals(this.displayOrder, categoryDto.displayOrder) &&
         Objects.equals(this.children, categoryDto.children);
   }
 
@@ -216,7 +240,7 @@ public class CategoryDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, type, hashCodeNullable(parentId), hashCodeNullable(icon), hashCodeNullable(iconColor), children);
+    return Objects.hash(id, name, type, hashCodeNullable(parentId), hashCodeNullable(icon), hashCodeNullable(iconColor), displayOrder, children);
   }
 
   private static <T> int hashCodeNullable(JsonNullable<T> a) {
@@ -236,6 +260,7 @@ public class CategoryDto {
     sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("    icon: ").append(toIndentedString(icon)).append("\n");
     sb.append("    iconColor: ").append(toIndentedString(iconColor)).append("\n");
+    sb.append("    displayOrder: ").append(toIndentedString(displayOrder)).append("\n");
     sb.append("    children: ").append(toIndentedString(children)).append("\n");
     sb.append("}");
     return sb.toString();

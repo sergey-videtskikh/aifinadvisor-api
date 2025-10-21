@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * TransactionDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T19:39:04.913677996Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:36:47.145286399Z[Etc/UTC]")
 public class TransactionDto {
 
   private UUID id;
@@ -39,6 +39,8 @@ public class TransactionDto {
   private UUID categoryId;
 
   private String name;
+
+  private String description;
 
   private TransactionType type;
 
@@ -168,6 +170,26 @@ public class TransactionDto {
     this.name = name;
   }
 
+  public TransactionDto description(String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * Подробное описание транзакции
+   * @return description
+  */
+  
+  @Schema(name = "description", example = "Обед с коллегами в кафе на Тверской", description = "Подробное описание транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   public TransactionDto type(TransactionType type) {
     this.type = type;
     return this;
@@ -263,6 +285,7 @@ public class TransactionDto {
         Objects.equals(this.date, transactionDto.date) &&
         Objects.equals(this.categoryId, transactionDto.categoryId) &&
         Objects.equals(this.name, transactionDto.name) &&
+        Objects.equals(this.description, transactionDto.description) &&
         Objects.equals(this.type, transactionDto.type) &&
         Objects.equals(this.inputType, transactionDto.inputType) &&
         Objects.equals(this.accountId, transactionDto.accountId) &&
@@ -271,7 +294,7 @@ public class TransactionDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, amount, currency, date, categoryId, name, type, inputType, accountId, excluded);
+    return Objects.hash(id, amount, currency, date, categoryId, name, description, type, inputType, accountId, excluded);
   }
 
   @Override
@@ -284,6 +307,7 @@ public class TransactionDto {
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    inputType: ").append(toIndentedString(inputType)).append("\n");
     sb.append("    accountId: ").append(toIndentedString(accountId)).append("\n");

@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "PatchTransactionRequest", description = "Частичное обновление транзакции - все поля опциональны")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-09T19:39:04.913677996Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:36:47.145286399Z[Etc/UTC]")
 public class PatchTransactionRequest {
 
   private String amount;
@@ -37,6 +37,8 @@ public class PatchTransactionRequest {
   private UUID categoryId;
 
   private String name;
+
+  private String description;
 
   private TransactionType type;
 
@@ -144,6 +146,26 @@ public class PatchTransactionRequest {
     this.name = name;
   }
 
+  public PatchTransactionRequest description(String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * Новое описание транзакции
+   * @return description
+  */
+  @Size(max = 500) 
+  @Schema(name = "description", description = "Новое описание транзакции", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   public PatchTransactionRequest type(TransactionType type) {
     this.type = type;
     return this;
@@ -218,6 +240,7 @@ public class PatchTransactionRequest {
         Objects.equals(this.date, patchTransactionRequest.date) &&
         Objects.equals(this.categoryId, patchTransactionRequest.categoryId) &&
         Objects.equals(this.name, patchTransactionRequest.name) &&
+        Objects.equals(this.description, patchTransactionRequest.description) &&
         Objects.equals(this.type, patchTransactionRequest.type) &&
         Objects.equals(this.accountId, patchTransactionRequest.accountId) &&
         Objects.equals(this.excluded, patchTransactionRequest.excluded);
@@ -225,7 +248,7 @@ public class PatchTransactionRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, currency, date, categoryId, name, type, accountId, excluded);
+    return Objects.hash(amount, currency, date, categoryId, name, description, type, accountId, excluded);
   }
 
   @Override
@@ -237,6 +260,7 @@ public class PatchTransactionRequest {
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    categoryId: ").append(toIndentedString(categoryId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    accountId: ").append(toIndentedString(accountId)).append("\n");
     sb.append("    excluded: ").append(toIndentedString(excluded)).append("\n");
