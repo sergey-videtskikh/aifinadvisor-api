@@ -1681,6 +1681,11 @@ components:
           nullable: true
           description: "Цвет иконки в HEX-формате"
           example: "#10B981"
+        displayOrder:
+          type: integer
+          minimum: 0
+          description: "Порядок отображения категории (меньше = выше в списке)"
+          example: 1
         children:
           type: array
           items:
@@ -1711,6 +1716,11 @@ components:
           type: string
           nullable: true
           description: "Цвет иконки в HEX-формате"
+        displayOrder:
+          type: integer
+          minimum: 0
+          description: "Порядок отображения категории (меньше = выше в списке)"
+          example: 1
 
     CategoryType:
       type: string
@@ -2179,6 +2189,11 @@ components:
           format: uuid
           nullable: true
           description: "ID родительской категории"
+        displayOrder:
+          type: integer
+          minimum: 0
+          description: "Порядок отображения категории (меньше = выше в списке)"
+          example: 1
 
 
 
