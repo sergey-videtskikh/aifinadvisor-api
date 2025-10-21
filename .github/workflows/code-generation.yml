@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Fetch all history for semantic version detection
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -85,9 +86,13 @@ jobs:
         id: version
         run: |
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "bump=patch" >> $GITHUB_OUTPUT
+            # Use semantic version detection based on OpenAPI changes and commits
+            BUMP_TYPE=$(node scripts/detect-version-bump.js | grep "^bump=" | cut -d= -f2)
+            echo "bump=${BUMP_TYPE}" >> $GITHUB_OUTPUT
+            echo "📊 Detected version bump: ${BUMP_TYPE}"
           else
             echo "bump=none" >> $GITHUB_OUTPUT
+            echo "🔍 Pull request - no version bump"
           fi
 
       - name: Bump version and sync packages

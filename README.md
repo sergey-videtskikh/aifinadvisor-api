@@ -77,7 +77,10 @@ This repository contains a **production-grade OpenAPI 3.0.3 specification** for 
 - **✅ OpenAPI Validation**: Redocly CLI with strict rules
 - **✅ Automated Generation**: Backend and frontend clients
 - **✅ Package Publishing**: NPM and Maven packages
-- **✅ Version Management**: Automated semantic versioning
+- **✅ Semantic Versioning**: Intelligent version bumps based on API changes
+  - **MAJOR**: Breaking changes (removed endpoints, changed types)
+  - **MINOR**: New features (new endpoints, optional fields)
+  - **PATCH**: Bug fixes and documentation updates
 
 ### 🛠️ Development Tools
 
@@ -129,6 +132,12 @@ npm run mock:server:dynamic   # Dynamic mock responses
 # Build & Publish
 npm run build:packages        # Build all packages
 npm run publish:all           # Publish to registries
+
+# Version Management
+npm run version:patch         # Bump patch version (1.0.4 → 1.0.5)
+npm run version:minor         # Bump minor version (1.0.4 → 1.1.0)
+npm run version:major         # Bump major version (1.0.4 → 2.0.0)
+node scripts/detect-version-bump.js  # Test semantic version detection
 ```
 
 ---
@@ -433,15 +442,55 @@ The project uses **Redocly CLI** with strict validation rules:
 - ✅ No unused components
 - ✅ Consistent naming conventions
 
-### Breaking Changes
+### Automated Semantic Versioning
 
-**⚠️ Breaking changes require major version bump:**
+Version bumps are **automatically determined** by analyzing changes to the OpenAPI specification:
 
-- Removing endpoints or fields
-- Changing field types
-- Adding required fields
-- Changing URL paths
-- Modifying response structures
+**🔴 MAJOR Version (Breaking Changes)**
+- ❌ Removed endpoints or HTTP methods
+- ❌ Removed schemas or required fields
+- ❌ Changed field types (e.g., `string` → `number`)
+- ❌ Removed enum values
+
+**🟡 MINOR Version (New Features)**
+- ✨ New endpoints or HTTP methods
+- ✨ New schemas or optional fields
+- ✨ New enum values
+
+**🟢 PATCH Version (Bug Fixes)**
+- 📝 Description or example updates
+- 📝 Documentation improvements
+- 🐛 Code generation bug fixes
+
+**How It Works:**
+
+1. Push changes to `openapi.yaml` or `api-docs/**`
+2. CI/CD compares with previous commit
+3. Detects breaking changes vs new features
+4. Automatically bumps version (major/minor/patch)
+5. Publishes to NPM and Maven registries
+6. Creates GitHub Release with changelog
+
+**Test Version Detection:**
+```bash
+# See what version bump would be applied
+node scripts/detect-version-bump.js
+
+# Output:
+# 🔍 Analyzing changes for semantic version bump...
+# 📊 Version Bump Decision: MINOR
+# New features detected in OpenAPI:
+#   - New endpoint: /api/v1/analytics
+```
+
+**Manual Override:**
+```bash
+npm run version:major  # Force major version bump
+npm run version:minor  # Force minor version bump
+npm run version:patch  # Force patch version bump
+```
+
+📖 **See [VERSIONING.md](VERSIONING.md) for complete versioning policy**
 
 ---
 
