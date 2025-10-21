@@ -1439,6 +1439,10 @@ components:
           type: string
           description: "Название транзакции"
           example: "Обед в кафе"
+        description:
+          type: string
+          description: "Подробное описание транзакции"
+          example: "Обед с коллегами в кафе на Тверской"
         type:
           $ref: '#/components/schemas/TransactionType'
         inputType:
@@ -1482,6 +1486,11 @@ components:
           maxLength: 100
           description: "Название транзакции"
           example: "Обед в кафе"
+        description:
+          type: string
+          maxLength: 500
+          description: "Подробное описание транзакции"
+          example: "Обед с коллегами в кафе на Тверской"
         type:
           $ref: '#/components/schemas/TransactionType'
         inputType:
@@ -1523,6 +1532,10 @@ components:
           minLength: 1
           maxLength: 100
           description: "Название транзакции"
+        description:
+          type: string
+          maxLength: 500
+          description: "Подробное описание транзакции"
         type:
           $ref: '#/components/schemas/TransactionType'
         accountId:
@@ -1562,6 +1575,10 @@ components:
           maxLength: 100
           description: "Новое название транзакции"
           example: "Обновленное название"
+        description:
+          type: string
+          maxLength: 500
+          description: "Новое описание транзакции"
         type:
           $ref: '#/components/schemas/TransactionType'
         accountId:
