@@ -147,7 +147,7 @@ You can manually bump versions using npm scripts:
 # Patch version (1.0.4 → 1.0.5)
 npm run version:patch
 
-# Minor version (1.0.4 → 1.1.0)
+# Minor version (1.0.4 → 1.1.1)
 npm run version:minor
 
 # Major version (1.0.4 → 2.0.0)
@@ -227,7 +227,7 @@ paths:
       ...
 ```
 
-**Result:** MINOR version bump (1.0.4 → 1.1.0)
+**Result:** MINOR version bump (1.0.4 → 1.1.1)
 
 ### Scenario 2: Removing Required Field
 

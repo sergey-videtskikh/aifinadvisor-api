@@ -135,7 +135,7 @@ npm run publish:all           # Publish to registries
 
 # Version Management
 npm run version:patch         # Bump patch version (1.0.4 → 1.0.5)
-npm run version:minor         # Bump minor version (1.0.4 → 1.1.0)
+npm run version:minor         # Bump minor version (1.0.4 → 1.1.1)
 npm run version:major         # Bump major version (1.0.4 → 2.0.0)
 node scripts/detect-version-bump.js  # Test semantic version detection
 ```
