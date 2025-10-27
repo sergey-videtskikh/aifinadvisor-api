@@ -1363,6 +1363,11 @@ components:
         hash:
           type: string
           description: "Хеш для проверки подлинности данных"
+        init_data:
+          type: string
+          nullable: true
+          description: "Сырая строка initData из Telegram Mini App (window.Telegram.WebApp.initData). Используется для валидации Mini App аутентификации. Если присутствует, используется вместо индивидуальных полей для проверки подлинности."
+          example: "query_id=AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A279058397%2C%22first_name%22%3A%22Sergey%22%7D&auth_date=1662771648&hash=..."
 
     ChangePasswordRequest:
       type: object
