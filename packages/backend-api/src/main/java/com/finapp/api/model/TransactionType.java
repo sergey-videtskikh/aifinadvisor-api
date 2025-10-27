@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Тип транзакции
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:50:17.094476136Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-27T12:48:48.819441954Z[Etc/UTC]")
 public enum TransactionType {
   
   INCOME("INCOME"),

@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * TelegramUserDto
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-21T10:50:17.094476136Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-27T12:48:48.819441954Z[Etc/UTC]")
 public class TelegramUserDto {
 
   private Long id;
@@ -38,6 +38,8 @@ public class TelegramUserDto {
   private Long authDate;
 
   private String hash;
+
+  private JsonNullable<String> initData = JsonNullable.<String>undefined();
 
   public TelegramUserDto() {
     super();
@@ -193,6 +195,26 @@ public class TelegramUserDto {
     this.hash = hash;
   }
 
+  public TelegramUserDto initData(String initData) {
+    this.initData = JsonNullable.of(initData);
+    return this;
+  }
+
+  /**
+   * Сырая строка initData из Telegram Mini App (window.Telegram.WebApp.initData). Используется для валидации Mini App аутентификации. Если присутствует, используется вместо индивидуальных полей для проверки подлинности.
+   * @return initData
+  */
+  
+  @Schema(name = "init_data", example = "query_id=AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A279058397%2C%22first_name%22%3A%22Sergey%22%7D&auth_date=1662771648&hash=...", description = "Сырая строка initData из Telegram Mini App (window.Telegram.WebApp.initData). Используется для валидации Mini App аутентификации. Если присутствует, используется вместо индивидуальных полей для проверки подлинности.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("init_data")
+  public JsonNullable<String> getInitData() {
+    return initData;
+  }
+
+  public void setInitData(JsonNullable<String> initData) {
+    this.initData = initData;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -208,7 +230,8 @@ public class TelegramUserDto {
         equalsNullable(this.username, telegramUserDto.username) &&
         equalsNullable(this.photoUrl, telegramUserDto.photoUrl) &&
         Objects.equals(this.authDate, telegramUserDto.authDate) &&
-        Objects.equals(this.hash, telegramUserDto.hash);
+        Objects.equals(this.hash, telegramUserDto.hash) &&
+        equalsNullable(this.initData, telegramUserDto.initData);
   }
 
   private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
@@ -217,7 +240,7 @@ public class TelegramUserDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, firstName, hashCodeNullable(lastName), hashCodeNullable(username), hashCodeNullable(photoUrl), authDate, hash);
+    return Objects.hash(id, firstName, hashCodeNullable(lastName), hashCodeNullable(username), hashCodeNullable(photoUrl), authDate, hash, hashCodeNullable(initData));
   }
 
   private static <T> int hashCodeNullable(JsonNullable<T> a) {
@@ -238,6 +261,7 @@ public class TelegramUserDto {
     sb.append("    photoUrl: ").append(toIndentedString(photoUrl)).append("\n");
     sb.append("    authDate: ").append(toIndentedString(authDate)).append("\n");
     sb.append("    hash: ").append(toIndentedString(hash)).append("\n");
+    sb.append("    initData: ").append(toIndentedString(initData)).append("\n");
     sb.append("}");
     return sb.toString();
   }
