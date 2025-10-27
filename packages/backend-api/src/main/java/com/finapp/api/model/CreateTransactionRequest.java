@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * CreateTransactionRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-27T12:48:48.819441954Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-27T14:18:21.767051747Z[Etc/UTC]")
 public class CreateTransactionRequest {
 
   private String amount;
